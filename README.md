@@ -45,3 +45,15 @@ go run ./cmd/relayward-conformance center-plugin-subscription fixtures/center-pl
 ```
 
 Versioning and compatibility rules are documented in `docs/versioning.md`; the release manifest is specified in `docs/plugin-manifest.md`.
+
+## Releases
+
+Semantic `vMAJOR.MINOR.PATCH` tags publish the Go module and a GitHub Release. A release contains:
+
+- the static Linux AMD64 `relayward-conformance` command;
+- a versioned `@relayward/ui-sdk` package archive;
+- deterministic shared conformance fixtures;
+- the installable contract-test plugin manifest, center and node binaries, and UI archive;
+- `SHA256SUMS` for every published asset.
+
+The UI SDK is distributed through GitHub Releases rather than an npm registry. The contract-test plugin is for conformance and integration testing only; it is not a production proxy runtime.

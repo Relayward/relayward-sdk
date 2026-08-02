@@ -29,7 +29,6 @@ jobs:
           cache-dependency-path: ui/package-lock.json
       - run: go test ./...
       - run: go vet ./...
-      - run: GOOS=linux GOARCH=amd64 go build -trimpath -o /tmp/relayward-conformance ./cmd/relayward-conformance
       - run: npm ci
         working-directory: ui
       - run: npm run typecheck
@@ -40,27 +39,27 @@ jobs:
         working-directory: ui
       - run: npm pack --pack-destination /tmp
         working-directory: ui
-      - run: ./scripts/build-contract-plugin.sh 0.1.0 /tmp/relayward-contract-plugin
-      - run: /tmp/relayward-conformance plugin-release /tmp/relayward-contract-plugin
-      - run: /tmp/relayward-conformance envelope fixtures/envelopes/system-hello.json
-      - run: /tmp/relayward-conformance agent-register fixtures/agent/register-request.json
-      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/hello.json
-      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command.json
-      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result.json
-      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
-      - run: /tmp/relayward-conformance agent-event-batch fixtures/agent/event-batch.json
-      - run: /tmp/relayward-conformance agent-event-ack fixtures/agent/event-batch-ack.json
-      - run: /tmp/relayward-conformance agent-plugin-reconcile fixtures/agent/plugin-reconcile-command.json
-      - run: /tmp/relayward-conformance agent-plugin-status fixtures/agent/plugin-status.json
-      - run: /tmp/relayward-conformance agent-policy-reconcile fixtures/agent/policy-reconcile-command.json
-      - run: /tmp/relayward-conformance agent-traffic-snapshot fixtures/agent/traffic-snapshot.json
-      - run: /tmp/relayward-conformance agent-access-event fixtures/agent/access-event.json
-      - run: /tmp/relayward-conformance node-plugin-info fixtures/node-plugin/info.json
-      - run: /tmp/relayward-conformance center-plugin-info fixtures/center-plugin/info.json
-      - run: /tmp/relayward-conformance center-plugin-activation fixtures/center-plugin/activation.json
-      - run: /tmp/relayward-conformance center-plugin-status fixtures/center-plugin/status.json
-      - run: /tmp/relayward-conformance center-plugin-ui fixtures/center-plugin/ui-request.json
-      - run: /tmp/relayward-conformance center-plugin-nodes fixtures/center-plugin/nodes.json
-      - run: /tmp/relayward-conformance center-plugin-services fixtures/center-plugin/services.json
-      - run: /tmp/relayward-conformance center-plugin-subscription fixtures/center-plugin/subscription.json
-      - run: shellcheck scripts/build-contract-plugin.sh
+      - run: ./scripts/build-release.sh 0.0.0-ci /tmp/relayward-sdk-release
+      - run: cd /tmp/relayward-sdk-release && sha256sum -c SHA256SUMS
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 envelope fixtures/envelopes/system-hello.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-register fixtures/agent/register-request.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-envelope fixtures/agent/hello.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-envelope fixtures/agent/command.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-envelope fixtures/agent/command-result.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-envelope fixtures/agent/command-result-ack.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-event-batch fixtures/agent/event-batch.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-event-ack fixtures/agent/event-batch-ack.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-plugin-reconcile fixtures/agent/plugin-reconcile-command.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-plugin-status fixtures/agent/plugin-status.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-policy-reconcile fixtures/agent/policy-reconcile-command.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-traffic-snapshot fixtures/agent/traffic-snapshot.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 agent-access-event fixtures/agent/access-event.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 node-plugin-info fixtures/node-plugin/info.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-info fixtures/center-plugin/info.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-activation fixtures/center-plugin/activation.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-status fixtures/center-plugin/status.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-ui fixtures/center-plugin/ui-request.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-nodes fixtures/center-plugin/nodes.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-services fixtures/center-plugin/services.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-subscription fixtures/center-plugin/subscription.json
+      - run: shellcheck scripts/build-contract-plugin.sh scripts/build-release.sh
