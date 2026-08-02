@@ -25,7 +25,8 @@ jobs:
       - run: go test ./...
       - run: go vet ./...
       - run: GOOS=linux GOARCH=amd64 go build -trimpath -o /tmp/relayward-conformance ./cmd/relayward-conformance
-      - run: /tmp/relayward-conformance manifest fixtures/contract-plugin/manifest.json
+      - run: ./scripts/build-contract-plugin.sh 0.1.0 /tmp/relayward-contract-plugin
+      - run: /tmp/relayward-conformance plugin-release /tmp/relayward-contract-plugin
       - run: /tmp/relayward-conformance envelope fixtures/envelopes/system-hello.json
       - run: /tmp/relayward-conformance agent-register fixtures/agent/register-request.json
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/hello.json
@@ -39,6 +40,7 @@ jobs:
       - run: /tmp/relayward-conformance center-plugin-status fixtures/center-plugin/status.json
       - run: /tmp/relayward-conformance center-plugin-ui fixtures/center-plugin/ui-request.json
       - run: /tmp/relayward-conformance center-plugin-nodes fixtures/center-plugin/nodes.json
+      - run: shellcheck scripts/build-contract-plugin.sh
 
   ui:
     runs-on: ubuntu-latest

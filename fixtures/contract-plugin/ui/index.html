@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relayward contract plugin</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div><p>Contract fixture</p><h1>Relayward plugin</h1></div>
+        <span id="identity">Connecting</span>
+      </header>
+      <dl><div><dt>Visible nodes</dt><dd id="node-count">-</dd></div></dl>
+      <div class="actions">
+        <button id="refresh" type="button">Refresh</button>
+        <button id="navigate" type="button">Open nodes</button>
+      </div>
+      <p id="error" role="alert"></p>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

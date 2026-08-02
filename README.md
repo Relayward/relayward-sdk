@@ -21,7 +21,8 @@ Proxy protocols and unfinished business RPCs are intentionally absent. They are 
 ```bash
 go test ./...
 go vet ./...
-go run ./cmd/relayward-conformance manifest fixtures/contract-plugin/manifest.json
+./scripts/build-contract-plugin.sh 0.1.0 /tmp/relayward-contract-plugin
+go run ./cmd/relayward-conformance plugin-release /tmp/relayward-contract-plugin
 go run ./cmd/relayward-conformance agent-register fixtures/agent/register-request.json
 go run ./cmd/relayward-conformance agent-envelope fixtures/agent/hello.json
 go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command.json

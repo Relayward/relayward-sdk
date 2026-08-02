@@ -1,5 +1,12 @@
 # Contract Test Plugin Fixture
 
-This manifest is a non-production fixture used to verify Relayward manifest parsing, permission declarations, release targeting, and API compatibility. Its checksums are placeholders for conformance tests and must never be installed as release artifacts.
+This non-production runtime plugin exercises center and node process lifecycle, permission-gated Host RPC, configuration rollback, health reporting, and the sandbox UI bridge.
 
-Executable lifecycle and RPC fixtures are added with the corresponding producer and consumer implementation; this fixture does not claim proxy capability.
+Build an installable GitHub Release-shaped directory with:
+
+```sh
+./scripts/build-contract-plugin.sh 0.1.0 /tmp/relayward-contract-plugin
+go run ./cmd/relayward-conformance plugin-release /tmp/relayward-contract-plugin
+```
+
+The generated directory contains accurate artifact sizes and SHA-256 digests. It is a CI fixture and does not provide proxy capability.

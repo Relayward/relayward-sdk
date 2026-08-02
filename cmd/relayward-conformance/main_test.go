@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -10,7 +11,10 @@ import (
 func TestRunManifest(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	path := filepath.Join("..", "..", "fixtures", "contract-plugin", "manifest.json")
+	path := filepath.Join(t.TempDir(), "manifest.json")
+	if err := os.WriteFile(path, []byte(testManifestJSON), 0o600); err != nil {
+		t.Fatal(err)
+	}
 
 	if code := run([]string{"manifest", path}, &stdout, &stderr); code != 0 {
 		t.Fatalf("run() = %d, stderr = %q", code, stderr.String())
@@ -19,6 +23,21 @@ func TestRunManifest(t *testing.T) {
 		t.Fatalf("stdout = %q", stdout.String())
 	}
 }
+
+const testManifestJSON = `{
+  "api_version":"relayward.plugin/v1",
+  "id":"io.relayward.test",
+  "name":"Test",
+  "version":"1.2.3",
+  "kind":"feature",
+  "requires":{"control_api":1},
+  "permissions":[],
+  "artifacts":[{
+    "role":"center","file":"center","size":1,
+    "sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "os":"linux","arch":"amd64"
+  }]
+}`
 
 func TestRunAgentFixtures(t *testing.T) {
 	tests := []struct {

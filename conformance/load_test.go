@@ -41,7 +41,16 @@ func TestLoadAgentEventFixtures(t *testing.T) {
 }
 
 func TestLoadContractPluginManifest(t *testing.T) {
-	path := filepath.Join("..", "fixtures", "contract-plugin", "manifest.json")
+	path := filepath.Join(t.TempDir(), "manifest.json")
+	raw := []byte(`{
+      "api_version":"relayward.plugin/v1","id":"io.relayward.contract-test","name":"Test",
+      "version":"0.1.0","kind":"feature","requires":{"control_api":1},"permissions":[],
+      "artifacts":[{"role":"center","file":"center","size":1,
+        "sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","os":"linux","arch":"amd64"}]
+    }`)
+	if err := os.WriteFile(path, raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
 	value, err := LoadManifest(path)
 	if err != nil {
 		t.Fatalf("LoadManifest() error = %v", err)
