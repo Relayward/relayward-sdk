@@ -20,6 +20,10 @@ esac
 
 rm -rf "$OUTPUT_DIRECTORY"
 mkdir -p "$OUTPUT_DIRECTORY"
+if [ ! -f ui/dist/index.js ]; then
+    echo "UI SDK build is missing; run npm --prefix ui run build first" >&2
+    exit 1
+fi
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -trimpath -buildvcs=false -ldflags "-s -w -buildid= -X main.version=$VERSION" \
     -o "$OUTPUT_DIRECTORY/contract-plugin-center-linux-amd64" ./cmd/relayward-contract-plugin

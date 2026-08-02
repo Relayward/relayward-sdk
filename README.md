@@ -21,6 +21,10 @@ Proxy protocols and unfinished business RPCs are intentionally absent. They are 
 ```bash
 go test ./...
 go vet ./...
+npm --prefix ui ci
+npm --prefix ui run typecheck
+npm --prefix ui test
+npm --prefix ui run build
 ./scripts/build-contract-plugin.sh 0.1.0 /tmp/relayward-contract-plugin
 go run ./cmd/relayward-conformance plugin-release /tmp/relayward-contract-plugin
 go run ./cmd/relayward-conformance agent-register fixtures/agent/register-request.json
@@ -31,11 +35,6 @@ go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command-result-
 go run ./cmd/relayward-conformance agent-event-batch fixtures/agent/event-batch.json
 go run ./cmd/relayward-conformance agent-event-ack fixtures/agent/event-batch-ack.json
 
-cd ui
-npm ci
-npm run typecheck
-npm test
-npm run build
 ```
 
 Versioning and compatibility rules are documented in `docs/versioning.md`; the release manifest is specified in `docs/plugin-manifest.md`.

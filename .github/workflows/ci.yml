@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  go:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -22,9 +22,24 @@ jobs:
         with:
           go-version: 1.26.x
           cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
       - run: go test ./...
       - run: go vet ./...
       - run: GOOS=linux GOARCH=amd64 go build -trimpath -o /tmp/relayward-conformance ./cmd/relayward-conformance
+      - run: npm ci
+        working-directory: ui
+      - run: npm run typecheck
+        working-directory: ui
+      - run: npm test
+        working-directory: ui
+      - run: npm run build
+        working-directory: ui
+      - run: npm pack --pack-destination /tmp
+        working-directory: ui
       - run: ./scripts/build-contract-plugin.sh 0.1.0 /tmp/relayward-contract-plugin
       - run: /tmp/relayward-conformance plugin-release /tmp/relayward-contract-plugin
       - run: /tmp/relayward-conformance envelope fixtures/envelopes/system-hello.json
@@ -41,21 +56,3 @@ jobs:
       - run: /tmp/relayward-conformance center-plugin-ui fixtures/center-plugin/ui-request.json
       - run: /tmp/relayward-conformance center-plugin-nodes fixtures/center-plugin/nodes.json
       - run: shellcheck scripts/build-contract-plugin.sh
-
-  ui:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ui
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: ui/package-lock.json
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-      - run: npm pack --pack-destination /tmp
