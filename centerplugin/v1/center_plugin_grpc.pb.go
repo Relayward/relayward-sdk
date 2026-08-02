@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CenterPlugin_GetInfo_FullMethodName   = "/relayward.centerplugin.v1.CenterPlugin/GetInfo"
-	CenterPlugin_Activate_FullMethodName  = "/relayward.centerplugin.v1.CenterPlugin/Activate"
-	CenterPlugin_GetStatus_FullMethodName = "/relayward.centerplugin.v1.CenterPlugin/GetStatus"
-	CenterPlugin_InvokeUI_FullMethodName  = "/relayward.centerplugin.v1.CenterPlugin/InvokeUI"
+	CenterPlugin_GetInfo_FullMethodName            = "/relayward.centerplugin.v1.CenterPlugin/GetInfo"
+	CenterPlugin_Activate_FullMethodName           = "/relayward.centerplugin.v1.CenterPlugin/Activate"
+	CenterPlugin_GetStatus_FullMethodName          = "/relayward.centerplugin.v1.CenterPlugin/GetStatus"
+	CenterPlugin_InvokeUI_FullMethodName           = "/relayward.centerplugin.v1.CenterPlugin/InvokeUI"
+	CenterPlugin_RenderSubscription_FullMethodName = "/relayward.centerplugin.v1.CenterPlugin/RenderSubscription"
 )
 
 // CenterPluginClient is the client API for CenterPlugin service.
@@ -33,6 +34,7 @@ type CenterPluginClient interface {
 	Activate(ctx context.Context, in *ActivateRequest, opts ...grpc.CallOption) (*Activated, error)
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
 	InvokeUI(ctx context.Context, in *InvokeUIRequest, opts ...grpc.CallOption) (*InvokeUIResponse, error)
+	RenderSubscription(ctx context.Context, in *RenderSubscriptionRequest, opts ...grpc.CallOption) (*RenderSubscriptionResponse, error)
 }
 
 type centerPluginClient struct {
@@ -83,6 +85,16 @@ func (c *centerPluginClient) InvokeUI(ctx context.Context, in *InvokeUIRequest, 
 	return out, nil
 }
 
+func (c *centerPluginClient) RenderSubscription(ctx context.Context, in *RenderSubscriptionRequest, opts ...grpc.CallOption) (*RenderSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RenderSubscriptionResponse)
+	err := c.cc.Invoke(ctx, CenterPlugin_RenderSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CenterPluginServer is the server API for CenterPlugin service.
 // All implementations must embed UnimplementedCenterPluginServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type CenterPluginServer interface {
 	Activate(context.Context, *ActivateRequest) (*Activated, error)
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
 	InvokeUI(context.Context, *InvokeUIRequest) (*InvokeUIResponse, error)
+	RenderSubscription(context.Context, *RenderSubscriptionRequest) (*RenderSubscriptionResponse, error)
 	mustEmbedUnimplementedCenterPluginServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedCenterPluginServer) GetStatus(context.Context, *GetStatusRequ
 }
 func (UnimplementedCenterPluginServer) InvokeUI(context.Context, *InvokeUIRequest) (*InvokeUIResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InvokeUI not implemented")
+}
+func (UnimplementedCenterPluginServer) RenderSubscription(context.Context, *RenderSubscriptionRequest) (*RenderSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenderSubscription not implemented")
 }
 func (UnimplementedCenterPluginServer) mustEmbedUnimplementedCenterPluginServer() {}
 func (UnimplementedCenterPluginServer) testEmbeddedByValue()                      {}
@@ -206,6 +222,24 @@ func _CenterPlugin_InvokeUI_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CenterPlugin_RenderSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenderSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CenterPluginServer).RenderSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CenterPlugin_RenderSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CenterPluginServer).RenderSubscription(ctx, req.(*RenderSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CenterPlugin_ServiceDesc is the grpc.ServiceDesc for CenterPlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -229,13 +263,18 @@ var CenterPlugin_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "InvokeUI",
 			Handler:    _CenterPlugin_InvokeUI_Handler,
 		},
+		{
+			MethodName: "RenderSubscription",
+			Handler:    _CenterPlugin_RenderSubscription_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "centerplugin/v1/center_plugin.proto",
 }
 
 const (
-	PluginHost_ListNodes_FullMethodName = "/relayward.centerplugin.v1.PluginHost/ListNodes"
+	PluginHost_ListNodes_FullMethodName       = "/relayward.centerplugin.v1.PluginHost/ListNodes"
+	PluginHost_ReplaceServices_FullMethodName = "/relayward.centerplugin.v1.PluginHost/ReplaceServices"
 )
 
 // PluginHostClient is the client API for PluginHost service.
@@ -243,6 +282,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginHostClient interface {
 	ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error)
+	ReplaceServices(ctx context.Context, in *ReplaceServicesRequest, opts ...grpc.CallOption) (*ServicesReplaced, error)
 }
 
 type pluginHostClient struct {
@@ -263,11 +303,22 @@ func (c *pluginHostClient) ListNodes(ctx context.Context, in *ListNodesRequest, 
 	return out, nil
 }
 
+func (c *pluginHostClient) ReplaceServices(ctx context.Context, in *ReplaceServicesRequest, opts ...grpc.CallOption) (*ServicesReplaced, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ServicesReplaced)
+	err := c.cc.Invoke(ctx, PluginHost_ReplaceServices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PluginHostServer is the server API for PluginHost service.
 // All implementations must embed UnimplementedPluginHostServer
 // for forward compatibility.
 type PluginHostServer interface {
 	ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error)
+	ReplaceServices(context.Context, *ReplaceServicesRequest) (*ServicesReplaced, error)
 	mustEmbedUnimplementedPluginHostServer()
 }
 
@@ -280,6 +331,9 @@ type UnimplementedPluginHostServer struct{}
 
 func (UnimplementedPluginHostServer) ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNodes not implemented")
+}
+func (UnimplementedPluginHostServer) ReplaceServices(context.Context, *ReplaceServicesRequest) (*ServicesReplaced, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReplaceServices not implemented")
 }
 func (UnimplementedPluginHostServer) mustEmbedUnimplementedPluginHostServer() {}
 func (UnimplementedPluginHostServer) testEmbeddedByValue()                    {}
@@ -320,6 +374,24 @@ func _PluginHost_ListNodes_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PluginHost_ReplaceServices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplaceServicesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginHostServer).ReplaceServices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PluginHost_ReplaceServices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginHostServer).ReplaceServices(ctx, req.(*ReplaceServicesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PluginHost_ServiceDesc is the grpc.ServiceDesc for PluginHost service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -330,6 +402,10 @@ var PluginHost_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListNodes",
 			Handler:    _PluginHost_ListNodes_Handler,
+		},
+		{
+			MethodName: "ReplaceServices",
+			Handler:    _PluginHost_ReplaceServices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

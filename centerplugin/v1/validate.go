@@ -5,10 +5,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"regexp"
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/Relayward/relayward-sdk/contract"
 )
@@ -19,13 +21,22 @@ const (
 	EnvironmentDataDirectory = "RELAYWARD_CENTER_PLUGIN_DATA_DIR"
 	EnvironmentPluginID      = "RELAYWARD_CENTER_PLUGIN_ID"
 
-	PermissionNodesRead = "core.nodes.read"
+	PermissionNodesRead     = "core.nodes.read"
+	PermissionServicesWrite = "core.services.write"
 
 	MaximumStatusMessageBytes = 512
 	MaximumUIJSONBytes        = 512 << 10
+	MaximumServices           = 256
+	MaximumFragmentsPerFormat = 32
+	MaximumFragmentBytes      = 64 << 10
+	MaximumSubscriptionBytes  = 512 << 10
 )
 
-var uiMethodPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$`)
+var (
+	uiMethodPattern  = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$`)
+	serviceIDPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
+	uuidPattern      = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
+)
 
 func ValidateInfoResponse(value *GetInfoResponse, expectedPluginID, expectedVersion string) error {
 	if value == nil {
@@ -135,17 +146,213 @@ func ValidateListNodesResponse(value *ListNodesResponse) error {
 	return nil
 }
 
+func ValidateReplaceServicesRequest(value *ReplaceServicesRequest) error {
+	if value == nil {
+		return fmt.Errorf("request: required")
+	}
+	if !uuidPattern.MatchString(value.NodeId) {
+		return fmt.Errorf("node_id: invalid node ID")
+	}
+	if len(value.Services) > MaximumServices {
+		return fmt.Errorf("services: must contain at most %d values", MaximumServices)
+	}
+	previous := ""
+	for index, service := range value.Services {
+		if service == nil {
+			return fmt.Errorf("services[%d]: required", index)
+		}
+		if !serviceIDPattern.MatchString(service.Id) {
+			return fmt.Errorf("services[%d].id: invalid service ID", index)
+		}
+		if index > 0 && service.Id <= previous {
+			return fmt.Errorf("services: values must be sorted by ID and unique")
+		}
+		previous = service.Id
+		if err := validateDisplayName(fmt.Sprintf("services[%d].display_name", index), service.DisplayName); err != nil {
+			return err
+		}
+		if err := validateCapabilities(fmt.Sprintf("services[%d].capabilities", index), service.Capabilities); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ValidateServicesReplaced(request *ReplaceServicesRequest, response *ServicesReplaced) error {
+	if err := ValidateReplaceServicesRequest(request); err != nil {
+		return err
+	}
+	if response == nil {
+		return fmt.Errorf("response: required")
+	}
+	if int(response.ServiceCount) != len(request.Services) {
+		return fmt.Errorf("service_count: does not match the request")
+	}
+	return nil
+}
+
+func ValidateRenderSubscriptionRequest(value *RenderSubscriptionRequest) error {
+	if value == nil {
+		return fmt.Errorf("request: required")
+	}
+	if !uuidPattern.MatchString(value.AuthorizationId) {
+		return fmt.Errorf("authorization_id: invalid authorization ID")
+	}
+	if !uuidPattern.MatchString(value.NodeId) {
+		return fmt.Errorf("node_id: invalid node ID")
+	}
+	if err := validateOptionalText("public_address", value.PublicAddress, 255); err != nil {
+		return err
+	}
+	if len(value.Services) == 0 || len(value.Services) > MaximumServices {
+		return fmt.Errorf("services: must contain 1 to %d values", MaximumServices)
+	}
+	previous := ""
+	for index, service := range value.Services {
+		if service == nil {
+			return fmt.Errorf("services[%d]: required", index)
+		}
+		if !serviceIDPattern.MatchString(service.ServiceId) {
+			return fmt.Errorf("services[%d].service_id: invalid service ID", index)
+		}
+		if index > 0 && service.ServiceId <= previous {
+			return fmt.Errorf("services: values must be sorted by service ID and unique")
+		}
+		previous = service.ServiceId
+		if err := validateDisplayName(fmt.Sprintf("services[%d].display_name", index), service.DisplayName); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ValidateRenderSubscriptionResponse(request *RenderSubscriptionRequest, response *RenderSubscriptionResponse) error {
+	if err := ValidateRenderSubscriptionRequest(request); err != nil {
+		return err
+	}
+	if response == nil {
+		return fmt.Errorf("response: required")
+	}
+	if len(response.Services) != len(request.Services) {
+		return fmt.Errorf("services: must contain one contribution for every requested service")
+	}
+	totalBytes := 0
+	for index, contribution := range response.Services {
+		if contribution == nil {
+			return fmt.Errorf("services[%d]: required", index)
+		}
+		if contribution.ServiceId != request.Services[index].ServiceId {
+			return fmt.Errorf("services[%d].service_id: does not match the request", index)
+		}
+		if err := validateDisplayName(fmt.Sprintf("services[%d].display_name", index), contribution.DisplayName); err != nil {
+			return err
+		}
+		if len(contribution.Uris)+len(contribution.MihomoProxiesJson)+len(contribution.SingBoxOutboundsJson) == 0 {
+			return fmt.Errorf("services[%d]: must contribute at least one subscription fragment", index)
+		}
+		if len(contribution.Uris) > MaximumFragmentsPerFormat || len(contribution.MihomoProxiesJson) > MaximumFragmentsPerFormat || len(contribution.SingBoxOutboundsJson) > MaximumFragmentsPerFormat {
+			return fmt.Errorf("services[%d]: each format must contain at most %d fragments", index, MaximumFragmentsPerFormat)
+		}
+		previousURI := ""
+		for uriIndex, raw := range contribution.Uris {
+			if raw <= previousURI && uriIndex > 0 {
+				return fmt.Errorf("services[%d].uris: values must be sorted and unique", index)
+			}
+			previousURI = raw
+			if err := validateSubscriptionURI(raw); err != nil {
+				return fmt.Errorf("services[%d].uris[%d]: %w", index, uriIndex, err)
+			}
+			totalBytes += len(raw)
+		}
+		for _, fragments := range []struct {
+			name   string
+			values [][]byte
+		}{{"mihomo_proxies_json", contribution.MihomoProxiesJson}, {"sing_box_outbounds_json", contribution.SingBoxOutboundsJson}} {
+			for fragmentIndex, raw := range fragments.values {
+				if len(raw) > MaximumFragmentBytes {
+					return fmt.Errorf("services[%d].%s[%d]: must contain at most %d bytes", index, fragments.name, fragmentIndex, MaximumFragmentBytes)
+				}
+				if err := validateJSONObject(raw); err != nil {
+					return fmt.Errorf("services[%d].%s[%d]: %w", index, fragments.name, fragmentIndex, err)
+				}
+				totalBytes += len(raw)
+			}
+		}
+		if totalBytes > MaximumSubscriptionBytes {
+			return fmt.Errorf("response: subscription fragments exceed %d bytes", MaximumSubscriptionBytes)
+		}
+	}
+	return nil
+}
+
 func validatePermissions(values []string) error {
 	if !sort.StringsAreSorted(values) {
 		return fmt.Errorf("permissions: must be sorted")
 	}
 	for index, value := range values {
-		if value != PermissionNodesRead {
+		if value != PermissionNodesRead && value != PermissionServicesWrite {
 			return fmt.Errorf("permissions[%d]: unsupported permission %q", index, value)
 		}
 		if index > 0 && value == values[index-1] {
 			return fmt.Errorf("permissions[%d]: duplicate permission %q", index, value)
 		}
+	}
+	return nil
+}
+
+func validateDisplayName(field, value string) error {
+	if value == "" || value != strings.TrimSpace(value) || !utf8.ValidString(value) || utf8.RuneCountInString(value) > 100 {
+		return fmt.Errorf("%s: must contain 1 to 100 trimmed characters", field)
+	}
+	for _, character := range value {
+		if unicode.IsControl(character) {
+			return fmt.Errorf("%s: must not contain control characters", field)
+		}
+	}
+	return nil
+}
+
+func validateCapabilities(field string, values []string) error {
+	if len(values) > 64 {
+		return fmt.Errorf("%s: must contain at most 64 values", field)
+	}
+	previous := ""
+	for index, value := range values {
+		if len(value) > 64 || !uiMethodPattern.MatchString(value) {
+			return fmt.Errorf("%s[%d]: invalid capability", field, index)
+		}
+		if index > 0 && value <= previous {
+			return fmt.Errorf("%s: values must be sorted and unique", field)
+		}
+		previous = value
+	}
+	return nil
+}
+
+func validateOptionalText(field, value string, maximum int) error {
+	if value != strings.TrimSpace(value) || !utf8.ValidString(value) || utf8.RuneCountInString(value) > maximum {
+		return fmt.Errorf("%s: must contain at most %d trimmed characters", field, maximum)
+	}
+	for _, character := range value {
+		if unicode.IsControl(character) {
+			return fmt.Errorf("%s: must not contain control characters", field)
+		}
+	}
+	return nil
+}
+
+func validateSubscriptionURI(value string) error {
+	if value == "" || len(value) > 8192 || value != strings.TrimSpace(value) {
+		return fmt.Errorf("must contain 1 to 8192 trimmed bytes")
+	}
+	for _, character := range value {
+		if unicode.IsControl(character) || unicode.IsSpace(character) {
+			return fmt.Errorf("must not contain whitespace or control characters")
+		}
+	}
+	parsed, err := url.Parse(value)
+	if err != nil || parsed.Scheme == "" {
+		return fmt.Errorf("must be an absolute URI")
 	}
 	return nil
 }

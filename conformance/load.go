@@ -203,6 +203,51 @@ func LoadCenterPluginNodes(path string) (*centerpluginv1.ListNodesResponse, erro
 	return value, nil
 }
 
+func LoadCenterPluginServices(path string) (*centerpluginv1.ReplaceServicesRequest, error) {
+	value := &centerpluginv1.ReplaceServicesRequest{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load center plugin services: %w", err)
+	}
+	if err := centerpluginv1.ValidateReplaceServicesRequest(value); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+type CenterPluginSubscriptionFixture struct {
+	Request  *centerpluginv1.RenderSubscriptionRequest
+	Response *centerpluginv1.RenderSubscriptionResponse
+}
+
+func LoadCenterPluginSubscription(path string) (CenterPluginSubscriptionFixture, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return CenterPluginSubscriptionFixture{}, fmt.Errorf("open center plugin subscription: %w", err)
+	}
+	defer file.Close()
+	var raw struct {
+		Request  json.RawMessage `json:"request"`
+		Response json.RawMessage `json:"response"`
+	}
+	if err := decodeContractJSON(file, &raw); err != nil {
+		return CenterPluginSubscriptionFixture{}, fmt.Errorf("decode center plugin subscription: %w", err)
+	}
+	value := CenterPluginSubscriptionFixture{
+		Request: &centerpluginv1.RenderSubscriptionRequest{}, Response: &centerpluginv1.RenderSubscriptionResponse{},
+	}
+	unmarshal := protojson.UnmarshalOptions{DiscardUnknown: false}
+	if err := unmarshal.Unmarshal(raw.Request, value.Request); err != nil {
+		return CenterPluginSubscriptionFixture{}, fmt.Errorf("decode center plugin subscription request: %w", err)
+	}
+	if err := unmarshal.Unmarshal(raw.Response, value.Response); err != nil {
+		return CenterPluginSubscriptionFixture{}, fmt.Errorf("decode center plugin subscription response: %w", err)
+	}
+	if err := centerpluginv1.ValidateRenderSubscriptionResponse(value.Request, value.Response); err != nil {
+		return CenterPluginSubscriptionFixture{}, err
+	}
+	return value, nil
+}
+
 func LoadEnvelope(path string) (protocol.Envelope, error) {
 	file, err := openContractFile(path)
 	if err != nil {

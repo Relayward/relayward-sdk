@@ -39,6 +39,8 @@ go run ./cmd/relayward-conformance agent-policy-reconcile fixtures/agent/policy-
 go run ./cmd/relayward-conformance agent-traffic-snapshot fixtures/agent/traffic-snapshot.json
 go run ./cmd/relayward-conformance agent-access-event fixtures/agent/access-event.json
 go run ./cmd/relayward-conformance node-plugin-info fixtures/node-plugin/info.json
+go run ./cmd/relayward-conformance center-plugin-services fixtures/center-plugin/services.json
+go run ./cmd/relayward-conformance center-plugin-subscription fixtures/center-plugin/subscription.json
 
 ```
 

@@ -1,0 +1,24 @@
+{
+  "request": {
+    "authorizationId": "20000000-0000-4000-8000-000000000002",
+    "nodeId": "10000000-0000-4000-8000-000000000001",
+    "publicAddress": "edge.example.com",
+    "services": [
+      {
+        "serviceId": "vless-main",
+        "displayName": "VLESS main"
+      }
+    ]
+  },
+  "response": {
+    "services": [
+      {
+        "serviceId": "vless-main",
+        "displayName": "VLESS main / Edge",
+        "uris": ["vless://credential@edge.example.com:443?security=tls#Edge"],
+        "mihomoProxiesJson": ["e30="],
+        "singBoxOutboundsJson": ["e30="]
+      }
+    ]
+  }
+}

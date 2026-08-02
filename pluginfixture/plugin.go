@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"net"
+	"net/url"
 	"os"
 	"sort"
 	"sync"
@@ -136,6 +137,36 @@ func (plugin *centerPlugin) InvokeUI(ctx context.Context, request *centerpluginv
 	default:
 		return nil, status.Error(codes.InvalidArgument, "unsupported UI method")
 	}
+}
+
+func (plugin *centerPlugin) RenderSubscription(_ context.Context, request *centerpluginv1.RenderSubscriptionRequest) (*centerpluginv1.RenderSubscriptionResponse, error) {
+	if err := centerpluginv1.ValidateRenderSubscriptionRequest(request); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid subscription request")
+	}
+	response := &centerpluginv1.RenderSubscriptionResponse{Services: make([]*centerpluginv1.SubscriptionServiceContribution, len(request.Services))}
+	for index, service := range request.Services {
+		name := service.DisplayName + " / Contract"
+		uri := (&url.URL{
+			Scheme: "relayward-test", Host: request.PublicAddress, Path: "/" + service.ServiceId,
+			User: url.User(request.AuthorizationId), Fragment: name,
+		}).String()
+		mihomo, _ := json.Marshal(map[string]any{
+			"name": name, "type": "relayward-test", "server": request.PublicAddress,
+			"authorization_id": request.AuthorizationId, "service_id": service.ServiceId,
+		})
+		singBox, _ := json.Marshal(map[string]any{
+			"tag": name, "type": "relayward-test", "server": request.PublicAddress,
+			"authorization_id": request.AuthorizationId, "service_id": service.ServiceId,
+		})
+		response.Services[index] = &centerpluginv1.SubscriptionServiceContribution{
+			ServiceId: service.ServiceId, DisplayName: name, Uris: []string{uri},
+			MihomoProxiesJson: [][]byte{mihomo}, SingBoxOutboundsJson: [][]byte{singBox},
+		}
+	}
+	if err := centerpluginv1.ValidateRenderSubscriptionResponse(request, response); err != nil {
+		return nil, status.Error(codes.Internal, "generated subscription is invalid")
+	}
+	return response, nil
 }
 
 type nodePlugin struct {

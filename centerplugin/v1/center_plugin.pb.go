@@ -589,6 +589,410 @@ func (x *ListNodesResponse) GetNodes() []*Node {
 	return nil
 }
 
+type ReplaceServicesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NodeId        string                 `protobuf:"bytes,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	Services      []*PluginService       `protobuf:"bytes,2,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplaceServicesRequest) Reset() {
+	*x = ReplaceServicesRequest{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplaceServicesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplaceServicesRequest) ProtoMessage() {}
+
+func (x *ReplaceServicesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplaceServicesRequest.ProtoReflect.Descriptor instead.
+func (*ReplaceServicesRequest) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ReplaceServicesRequest) GetNodeId() string {
+	if x != nil {
+		return x.NodeId
+	}
+	return ""
+}
+
+func (x *ReplaceServicesRequest) GetServices() []*PluginService {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type PluginService struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Enabled       bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Capabilities  []string               `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PluginService) Reset() {
+	*x = PluginService{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PluginService) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PluginService) ProtoMessage() {}
+
+func (x *PluginService) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PluginService.ProtoReflect.Descriptor instead.
+func (*PluginService) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *PluginService) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PluginService) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *PluginService) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *PluginService) GetCapabilities() []string {
+	if x != nil {
+		return x.Capabilities
+	}
+	return nil
+}
+
+type ServicesReplaced struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServiceCount  uint32                 `protobuf:"varint,1,opt,name=service_count,json=serviceCount,proto3" json:"service_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServicesReplaced) Reset() {
+	*x = ServicesReplaced{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServicesReplaced) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServicesReplaced) ProtoMessage() {}
+
+func (x *ServicesReplaced) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServicesReplaced.ProtoReflect.Descriptor instead.
+func (*ServicesReplaced) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ServicesReplaced) GetServiceCount() uint32 {
+	if x != nil {
+		return x.ServiceCount
+	}
+	return 0
+}
+
+type RenderSubscriptionRequest struct {
+	state           protoimpl.MessageState        `protogen:"open.v1"`
+	AuthorizationId string                        `protobuf:"bytes,1,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
+	NodeId          string                        `protobuf:"bytes,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	PublicAddress   string                        `protobuf:"bytes,3,opt,name=public_address,json=publicAddress,proto3" json:"public_address,omitempty"`
+	Services        []*SubscriptionServiceBinding `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *RenderSubscriptionRequest) Reset() {
+	*x = RenderSubscriptionRequest{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenderSubscriptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenderSubscriptionRequest) ProtoMessage() {}
+
+func (x *RenderSubscriptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenderSubscriptionRequest.ProtoReflect.Descriptor instead.
+func (*RenderSubscriptionRequest) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *RenderSubscriptionRequest) GetAuthorizationId() string {
+	if x != nil {
+		return x.AuthorizationId
+	}
+	return ""
+}
+
+func (x *RenderSubscriptionRequest) GetNodeId() string {
+	if x != nil {
+		return x.NodeId
+	}
+	return ""
+}
+
+func (x *RenderSubscriptionRequest) GetPublicAddress() string {
+	if x != nil {
+		return x.PublicAddress
+	}
+	return ""
+}
+
+func (x *RenderSubscriptionRequest) GetServices() []*SubscriptionServiceBinding {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type SubscriptionServiceBinding struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServiceId     string                 `protobuf:"bytes,1,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubscriptionServiceBinding) Reset() {
+	*x = SubscriptionServiceBinding{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubscriptionServiceBinding) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubscriptionServiceBinding) ProtoMessage() {}
+
+func (x *SubscriptionServiceBinding) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubscriptionServiceBinding.ProtoReflect.Descriptor instead.
+func (*SubscriptionServiceBinding) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *SubscriptionServiceBinding) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *SubscriptionServiceBinding) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+type RenderSubscriptionResponse struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Services      []*SubscriptionServiceContribution `protobuf:"bytes,1,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RenderSubscriptionResponse) Reset() {
+	*x = RenderSubscriptionResponse{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenderSubscriptionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenderSubscriptionResponse) ProtoMessage() {}
+
+func (x *RenderSubscriptionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenderSubscriptionResponse.ProtoReflect.Descriptor instead.
+func (*RenderSubscriptionResponse) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *RenderSubscriptionResponse) GetServices() []*SubscriptionServiceContribution {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type SubscriptionServiceContribution struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	ServiceId            string                 `protobuf:"bytes,1,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	DisplayName          string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Uris                 []string               `protobuf:"bytes,3,rep,name=uris,proto3" json:"uris,omitempty"`
+	MihomoProxiesJson    [][]byte               `protobuf:"bytes,4,rep,name=mihomo_proxies_json,json=mihomoProxiesJson,proto3" json:"mihomo_proxies_json,omitempty"`
+	SingBoxOutboundsJson [][]byte               `protobuf:"bytes,5,rep,name=sing_box_outbounds_json,json=singBoxOutboundsJson,proto3" json:"sing_box_outbounds_json,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *SubscriptionServiceContribution) Reset() {
+	*x = SubscriptionServiceContribution{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubscriptionServiceContribution) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubscriptionServiceContribution) ProtoMessage() {}
+
+func (x *SubscriptionServiceContribution) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubscriptionServiceContribution.ProtoReflect.Descriptor instead.
+func (*SubscriptionServiceContribution) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *SubscriptionServiceContribution) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *SubscriptionServiceContribution) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *SubscriptionServiceContribution) GetUris() []string {
+	if x != nil {
+		return x.Uris
+	}
+	return nil
+}
+
+func (x *SubscriptionServiceContribution) GetMihomoProxiesJson() [][]byte {
+	if x != nil {
+		return x.MihomoProxiesJson
+	}
+	return nil
+}
+
+func (x *SubscriptionServiceContribution) GetSingBoxOutboundsJson() [][]byte {
+	if x != nil {
+		return x.SingBoxOutboundsJson
+	}
+	return nil
+}
+
 var File_centerplugin_v1_center_plugin_proto protoreflect.FileDescriptor
 
 const file_centerplugin_v1_center_plugin_proto_rawDesc = "" +
@@ -620,20 +1024,50 @@ const file_centerplugin_v1_center_plugin_proto_rawDesc = "" +
 	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\x1c\n" +
 	"\tconnected\x18\x04 \x01(\bR\tconnected\"J\n" +
 	"\x11ListNodesResponse\x125\n" +
-	"\x05nodes\x18\x01 \x03(\v2\x1f.relayward.centerplugin.v1.NodeR\x05nodes*_\n" +
+	"\x05nodes\x18\x01 \x03(\v2\x1f.relayward.centerplugin.v1.NodeR\x05nodes\"w\n" +
+	"\x16ReplaceServicesRequest\x12\x17\n" +
+	"\anode_id\x18\x01 \x01(\tR\x06nodeId\x12D\n" +
+	"\bservices\x18\x02 \x03(\v2(.relayward.centerplugin.v1.PluginServiceR\bservices\"\x80\x01\n" +
+	"\rPluginService\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x18\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\"\n" +
+	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\"7\n" +
+	"\x10ServicesReplaced\x12#\n" +
+	"\rservice_count\x18\x01 \x01(\rR\fserviceCount\"\xd9\x01\n" +
+	"\x19RenderSubscriptionRequest\x12)\n" +
+	"\x10authorization_id\x18\x01 \x01(\tR\x0fauthorizationId\x12\x17\n" +
+	"\anode_id\x18\x02 \x01(\tR\x06nodeId\x12%\n" +
+	"\x0epublic_address\x18\x03 \x01(\tR\rpublicAddress\x12Q\n" +
+	"\bservices\x18\x04 \x03(\v25.relayward.centerplugin.v1.SubscriptionServiceBindingR\bservices\"^\n" +
+	"\x1aSubscriptionServiceBinding\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\"t\n" +
+	"\x1aRenderSubscriptionResponse\x12V\n" +
+	"\bservices\x18\x01 \x03(\v2:.relayward.centerplugin.v1.SubscriptionServiceContributionR\bservices\"\xde\x01\n" +
+	"\x1fSubscriptionServiceContribution\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x12\n" +
+	"\x04uris\x18\x03 \x03(\tR\x04uris\x12.\n" +
+	"\x13mihomo_proxies_json\x18\x04 \x03(\fR\x11mihomoProxiesJson\x125\n" +
+	"\x17sing_box_outbounds_json\x18\x05 \x03(\fR\x14singBoxOutboundsJson*_\n" +
 	"\x06Health\x12\x16\n" +
 	"\x12HEALTH_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fHEALTH_STARTING\x10\x01\x12\x12\n" +
 	"\x0eHEALTH_HEALTHY\x10\x02\x12\x14\n" +
-	"\x10HEALTH_UNHEALTHY\x10\x032\x9b\x03\n" +
+	"\x10HEALTH_UNHEALTHY\x10\x032\x9f\x04\n" +
 	"\fCenterPlugin\x12`\n" +
 	"\aGetInfo\x12).relayward.centerplugin.v1.GetInfoRequest\x1a*.relayward.centerplugin.v1.GetInfoResponse\x12\\\n" +
 	"\bActivate\x12*.relayward.centerplugin.v1.ActivateRequest\x1a$.relayward.centerplugin.v1.Activated\x12f\n" +
 	"\tGetStatus\x12+.relayward.centerplugin.v1.GetStatusRequest\x1a,.relayward.centerplugin.v1.GetStatusResponse\x12c\n" +
-	"\bInvokeUI\x12*.relayward.centerplugin.v1.InvokeUIRequest\x1a+.relayward.centerplugin.v1.InvokeUIResponse2t\n" +
+	"\bInvokeUI\x12*.relayward.centerplugin.v1.InvokeUIRequest\x1a+.relayward.centerplugin.v1.InvokeUIResponse\x12\x81\x01\n" +
+	"\x12RenderSubscription\x124.relayward.centerplugin.v1.RenderSubscriptionRequest\x1a5.relayward.centerplugin.v1.RenderSubscriptionResponse2\xe7\x01\n" +
 	"\n" +
 	"PluginHost\x12f\n" +
-	"\tListNodes\x12+.relayward.centerplugin.v1.ListNodesRequest\x1a,.relayward.centerplugin.v1.ListNodesResponseBCZAgithub.com/Relayward/relayward-sdk/centerplugin/v1;centerpluginv1b\x06proto3"
+	"\tListNodes\x12+.relayward.centerplugin.v1.ListNodesRequest\x1a,.relayward.centerplugin.v1.ListNodesResponse\x12q\n" +
+	"\x0fReplaceServices\x121.relayward.centerplugin.v1.ReplaceServicesRequest\x1a+.relayward.centerplugin.v1.ServicesReplacedBCZAgithub.com/Relayward/relayward-sdk/centerplugin/v1;centerpluginv1b\x06proto3"
 
 var (
 	file_centerplugin_v1_center_plugin_proto_rawDescOnce sync.Once
@@ -648,39 +1082,53 @@ func file_centerplugin_v1_center_plugin_proto_rawDescGZIP() []byte {
 }
 
 var file_centerplugin_v1_center_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_centerplugin_v1_center_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_centerplugin_v1_center_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_centerplugin_v1_center_plugin_proto_goTypes = []any{
-	(Health)(0),               // 0: relayward.centerplugin.v1.Health
-	(*GetInfoRequest)(nil),    // 1: relayward.centerplugin.v1.GetInfoRequest
-	(*GetInfoResponse)(nil),   // 2: relayward.centerplugin.v1.GetInfoResponse
-	(*ActivateRequest)(nil),   // 3: relayward.centerplugin.v1.ActivateRequest
-	(*Activated)(nil),         // 4: relayward.centerplugin.v1.Activated
-	(*GetStatusRequest)(nil),  // 5: relayward.centerplugin.v1.GetStatusRequest
-	(*GetStatusResponse)(nil), // 6: relayward.centerplugin.v1.GetStatusResponse
-	(*InvokeUIRequest)(nil),   // 7: relayward.centerplugin.v1.InvokeUIRequest
-	(*InvokeUIResponse)(nil),  // 8: relayward.centerplugin.v1.InvokeUIResponse
-	(*ListNodesRequest)(nil),  // 9: relayward.centerplugin.v1.ListNodesRequest
-	(*Node)(nil),              // 10: relayward.centerplugin.v1.Node
-	(*ListNodesResponse)(nil), // 11: relayward.centerplugin.v1.ListNodesResponse
+	(Health)(0),                             // 0: relayward.centerplugin.v1.Health
+	(*GetInfoRequest)(nil),                  // 1: relayward.centerplugin.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),                 // 2: relayward.centerplugin.v1.GetInfoResponse
+	(*ActivateRequest)(nil),                 // 3: relayward.centerplugin.v1.ActivateRequest
+	(*Activated)(nil),                       // 4: relayward.centerplugin.v1.Activated
+	(*GetStatusRequest)(nil),                // 5: relayward.centerplugin.v1.GetStatusRequest
+	(*GetStatusResponse)(nil),               // 6: relayward.centerplugin.v1.GetStatusResponse
+	(*InvokeUIRequest)(nil),                 // 7: relayward.centerplugin.v1.InvokeUIRequest
+	(*InvokeUIResponse)(nil),                // 8: relayward.centerplugin.v1.InvokeUIResponse
+	(*ListNodesRequest)(nil),                // 9: relayward.centerplugin.v1.ListNodesRequest
+	(*Node)(nil),                            // 10: relayward.centerplugin.v1.Node
+	(*ListNodesResponse)(nil),               // 11: relayward.centerplugin.v1.ListNodesResponse
+	(*ReplaceServicesRequest)(nil),          // 12: relayward.centerplugin.v1.ReplaceServicesRequest
+	(*PluginService)(nil),                   // 13: relayward.centerplugin.v1.PluginService
+	(*ServicesReplaced)(nil),                // 14: relayward.centerplugin.v1.ServicesReplaced
+	(*RenderSubscriptionRequest)(nil),       // 15: relayward.centerplugin.v1.RenderSubscriptionRequest
+	(*SubscriptionServiceBinding)(nil),      // 16: relayward.centerplugin.v1.SubscriptionServiceBinding
+	(*RenderSubscriptionResponse)(nil),      // 17: relayward.centerplugin.v1.RenderSubscriptionResponse
+	(*SubscriptionServiceContribution)(nil), // 18: relayward.centerplugin.v1.SubscriptionServiceContribution
 }
 var file_centerplugin_v1_center_plugin_proto_depIdxs = []int32{
 	0,  // 0: relayward.centerplugin.v1.GetStatusResponse.health:type_name -> relayward.centerplugin.v1.Health
 	10, // 1: relayward.centerplugin.v1.ListNodesResponse.nodes:type_name -> relayward.centerplugin.v1.Node
-	1,  // 2: relayward.centerplugin.v1.CenterPlugin.GetInfo:input_type -> relayward.centerplugin.v1.GetInfoRequest
-	3,  // 3: relayward.centerplugin.v1.CenterPlugin.Activate:input_type -> relayward.centerplugin.v1.ActivateRequest
-	5,  // 4: relayward.centerplugin.v1.CenterPlugin.GetStatus:input_type -> relayward.centerplugin.v1.GetStatusRequest
-	7,  // 5: relayward.centerplugin.v1.CenterPlugin.InvokeUI:input_type -> relayward.centerplugin.v1.InvokeUIRequest
-	9,  // 6: relayward.centerplugin.v1.PluginHost.ListNodes:input_type -> relayward.centerplugin.v1.ListNodesRequest
-	2,  // 7: relayward.centerplugin.v1.CenterPlugin.GetInfo:output_type -> relayward.centerplugin.v1.GetInfoResponse
-	4,  // 8: relayward.centerplugin.v1.CenterPlugin.Activate:output_type -> relayward.centerplugin.v1.Activated
-	6,  // 9: relayward.centerplugin.v1.CenterPlugin.GetStatus:output_type -> relayward.centerplugin.v1.GetStatusResponse
-	8,  // 10: relayward.centerplugin.v1.CenterPlugin.InvokeUI:output_type -> relayward.centerplugin.v1.InvokeUIResponse
-	11, // 11: relayward.centerplugin.v1.PluginHost.ListNodes:output_type -> relayward.centerplugin.v1.ListNodesResponse
-	7,  // [7:12] is the sub-list for method output_type
-	2,  // [2:7] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	13, // 2: relayward.centerplugin.v1.ReplaceServicesRequest.services:type_name -> relayward.centerplugin.v1.PluginService
+	16, // 3: relayward.centerplugin.v1.RenderSubscriptionRequest.services:type_name -> relayward.centerplugin.v1.SubscriptionServiceBinding
+	18, // 4: relayward.centerplugin.v1.RenderSubscriptionResponse.services:type_name -> relayward.centerplugin.v1.SubscriptionServiceContribution
+	1,  // 5: relayward.centerplugin.v1.CenterPlugin.GetInfo:input_type -> relayward.centerplugin.v1.GetInfoRequest
+	3,  // 6: relayward.centerplugin.v1.CenterPlugin.Activate:input_type -> relayward.centerplugin.v1.ActivateRequest
+	5,  // 7: relayward.centerplugin.v1.CenterPlugin.GetStatus:input_type -> relayward.centerplugin.v1.GetStatusRequest
+	7,  // 8: relayward.centerplugin.v1.CenterPlugin.InvokeUI:input_type -> relayward.centerplugin.v1.InvokeUIRequest
+	15, // 9: relayward.centerplugin.v1.CenterPlugin.RenderSubscription:input_type -> relayward.centerplugin.v1.RenderSubscriptionRequest
+	9,  // 10: relayward.centerplugin.v1.PluginHost.ListNodes:input_type -> relayward.centerplugin.v1.ListNodesRequest
+	12, // 11: relayward.centerplugin.v1.PluginHost.ReplaceServices:input_type -> relayward.centerplugin.v1.ReplaceServicesRequest
+	2,  // 12: relayward.centerplugin.v1.CenterPlugin.GetInfo:output_type -> relayward.centerplugin.v1.GetInfoResponse
+	4,  // 13: relayward.centerplugin.v1.CenterPlugin.Activate:output_type -> relayward.centerplugin.v1.Activated
+	6,  // 14: relayward.centerplugin.v1.CenterPlugin.GetStatus:output_type -> relayward.centerplugin.v1.GetStatusResponse
+	8,  // 15: relayward.centerplugin.v1.CenterPlugin.InvokeUI:output_type -> relayward.centerplugin.v1.InvokeUIResponse
+	17, // 16: relayward.centerplugin.v1.CenterPlugin.RenderSubscription:output_type -> relayward.centerplugin.v1.RenderSubscriptionResponse
+	11, // 17: relayward.centerplugin.v1.PluginHost.ListNodes:output_type -> relayward.centerplugin.v1.ListNodesResponse
+	14, // 18: relayward.centerplugin.v1.PluginHost.ReplaceServices:output_type -> relayward.centerplugin.v1.ServicesReplaced
+	12, // [12:19] is the sub-list for method output_type
+	5,  // [5:12] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_centerplugin_v1_center_plugin_proto_init() }
@@ -694,7 +1142,7 @@ func file_centerplugin_v1_center_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_centerplugin_v1_center_plugin_proto_rawDesc), len(file_centerplugin_v1_center_plugin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

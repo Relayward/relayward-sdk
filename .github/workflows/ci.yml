@@ -61,4 +61,6 @@ jobs:
       - run: /tmp/relayward-conformance center-plugin-status fixtures/center-plugin/status.json
       - run: /tmp/relayward-conformance center-plugin-ui fixtures/center-plugin/ui-request.json
       - run: /tmp/relayward-conformance center-plugin-nodes fixtures/center-plugin/nodes.json
+      - run: /tmp/relayward-conformance center-plugin-services fixtures/center-plugin/services.json
+      - run: /tmp/relayward-conformance center-plugin-subscription fixtures/center-plugin/subscription.json
       - run: shellcheck scripts/build-contract-plugin.sh

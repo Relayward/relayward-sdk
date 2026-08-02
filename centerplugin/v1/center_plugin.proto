@@ -9,10 +9,12 @@ service CenterPlugin {
   rpc Activate(ActivateRequest) returns (Activated);
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
   rpc InvokeUI(InvokeUIRequest) returns (InvokeUIResponse);
+  rpc RenderSubscription(RenderSubscriptionRequest) returns (RenderSubscriptionResponse);
 }
 
 service PluginHost {
   rpc ListNodes(ListNodesRequest) returns (ListNodesResponse);
+  rpc ReplaceServices(ReplaceServicesRequest) returns (ServicesReplaced);
 }
 
 message GetInfoRequest {}
@@ -65,4 +67,44 @@ message Node {
 
 message ListNodesResponse {
   repeated Node nodes = 1;
+}
+
+message ReplaceServicesRequest {
+  string node_id = 1;
+  repeated PluginService services = 2;
+}
+
+message PluginService {
+  string id = 1;
+  string display_name = 2;
+  bool enabled = 3;
+  repeated string capabilities = 4;
+}
+
+message ServicesReplaced {
+  uint32 service_count = 1;
+}
+
+message RenderSubscriptionRequest {
+  string authorization_id = 1;
+  string node_id = 2;
+  string public_address = 3;
+  repeated SubscriptionServiceBinding services = 4;
+}
+
+message SubscriptionServiceBinding {
+  string service_id = 1;
+  string display_name = 2;
+}
+
+message RenderSubscriptionResponse {
+  repeated SubscriptionServiceContribution services = 1;
+}
+
+message SubscriptionServiceContribution {
+  string service_id = 1;
+  string display_name = 2;
+  repeated string uris = 3;
+  repeated bytes mihomo_proxies_json = 4;
+  repeated bytes sing_box_outbounds_json = 5;
 }

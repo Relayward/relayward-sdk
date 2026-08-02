@@ -94,6 +94,12 @@ func TestLoadCenterPluginFixtures(t *testing.T) {
 	if _, err := LoadCenterPluginNodes(filepath.Join(root, "nodes.json")); err != nil {
 		t.Fatalf("LoadCenterPluginNodes() error = %v", err)
 	}
+	if _, err := LoadCenterPluginServices(filepath.Join(root, "services.json")); err != nil {
+		t.Fatalf("LoadCenterPluginServices() error = %v", err)
+	}
+	if _, err := LoadCenterPluginSubscription(filepath.Join(root, "subscription.json")); err != nil {
+		t.Fatalf("LoadCenterPluginSubscription() error = %v", err)
+	}
 }
 
 func TestLoadManifestRejectsOversizedFile(t *testing.T) {
