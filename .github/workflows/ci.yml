@@ -63,4 +63,5 @@ jobs:
       - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-services fixtures/center-plugin/services.json
       - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-subscription fixtures/center-plugin/subscription.json
       - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-events fixtures/center-plugin/events.json
+      - run: /tmp/relayward-sdk-release/relayward-conformance-linux-amd64 center-plugin-published-events fixtures/center-plugin/published-events.json
       - run: shellcheck scripts/build-contract-plugin.sh scripts/build-release.sh

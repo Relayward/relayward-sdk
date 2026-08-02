@@ -16,6 +16,7 @@ service CenterPlugin {
 service PluginHost {
   rpc ListNodes(ListNodesRequest) returns (ListNodesResponse);
   rpc ReplaceServices(ReplaceServicesRequest) returns (ServicesReplaced);
+  rpc PublishEvents(PublishEventsRequest) returns (EventsPublished);
 }
 
 message GetInfoRequest {}
@@ -85,6 +86,22 @@ message PluginService {
 
 message ServicesReplaced {
   uint32 service_count = 1;
+}
+
+message PublishEventsRequest {
+  repeated PublishedEvent events = 1;
+}
+
+message PublishedEvent {
+  string source_event_id = 1;
+  string node_id = 2;
+  string kind = 3;
+  int64 observed_at_unix_nano = 4;
+  bytes json = 5;
+}
+
+message EventsPublished {
+  uint32 event_count = 1;
 }
 
 message RenderSubscriptionRequest {

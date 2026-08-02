@@ -14,6 +14,7 @@ Host RPC authorization is bound to the plugin process, its expected plugin ID, a
 
 - `core.nodes.read`, which permits `ListNodes`. The response exposes node ID, display name, enabled state, and current connection state; it does not expose node credentials, addresses, Agent hostnames, or event data.
 - `core.events.read`, which permits a feature plugin to consume the standard event stream. Event access includes source IP and destination data when present, so it must be declared with a specific reason and approved explicitly. Runtime plugins are never registered as event consumers even if they declare the permission.
+- `core.events.write`, which permits a plugin to atomically publish bounded structured events. Source event IDs are stable publisher-owned idempotency keys. Custom kinds must use `plugin.<plugin-id>.*`; the reserved `notification.request` kind must use the SDK payload below.
 - `core.services.write`, which permits `ReplaceServices`. A runtime plugin atomically replaces only its own service catalog for one node. The Host supplies the plugin identity from the supervised process, so a plugin cannot create services for another plugin. An empty list removes the plugin's catalog for that node. Service IDs and capabilities are sorted, unique, bounded values. Each service supplies a SHA-256 digest of all plugin-owned inputs that can change its subscription output; the digest reveals no configuration and changes whenever those inputs change.
 
 A missing permission is returned as gRPC `PermissionDenied`. Registering services for a node where the plugin has no node instance is rejected.
@@ -28,7 +29,11 @@ Consumption is at least once. A plugin must persist any state derived from the c
 
 Replay is bounded by the center's hot-event retention. A plugin unavailable beyond that window resumes from the next retained event instead of preventing cleanup and allowing the event database to grow without bound. Long-term normalized access archives are independent of this live-consumer stream.
 
-The same namespaced event interface is the extension point for later structured notification requests and notification-channel feature plugins. Version 1 deliberately does not define or implement Telegram, Uptime Kuma, or another channel-specific API.
+## Event publishing and notification requests
+
+`PublishEvents` accepts a sorted batch and commits all entries or none. A plugin retrying the same source event ID and identical content receives success without creating a duplicate. Reusing an ID with different node, kind, time, or JSON is rejected. Published events enter the same hot stream and independent feature-consumer cursors as Agent events.
+
+`notification.request` is the channel-neutral delivery interface for later notification plugins. Its strict JSON object contains `severity` (`info`, `warning`, `error`, or `critical`), a short `subject`, a bounded multiline `body`, and an optional stable `dedup_key`. It deliberately contains no Telegram chat ID, webhook URL, Markdown mode, or other channel-specific setting. Version 1 defines the reliable request path but does not implement a real notification channel.
 
 ## UI RPC
 

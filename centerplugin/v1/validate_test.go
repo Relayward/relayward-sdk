@@ -11,12 +11,37 @@ func TestCenterPluginLifecycleValidation(t *testing.T) {
 	if err := ValidateInfoResponse(info, info.PluginId, info.Version); err != nil {
 		t.Fatalf("ValidateInfoResponse() error = %v", err)
 	}
-	request := &ActivateRequest{Permissions: []string{PermissionEventsRead, PermissionNodesRead, PermissionServicesWrite}}
+	request := &ActivateRequest{Permissions: []string{PermissionEventsRead, PermissionEventsWrite, PermissionNodesRead, PermissionServicesWrite}}
 	if err := ValidateActivated(request, &Activated{Permissions: append([]string(nil), request.Permissions...)}); err != nil {
 		t.Fatalf("ValidateActivated() error = %v", err)
 	}
 	if err := ValidateStatusResponse(&GetStatusResponse{Health: Health_HEALTH_HEALTHY}); err != nil {
 		t.Fatalf("ValidateStatusResponse() error = %v", err)
+	}
+}
+
+func TestPublishedEventValidation(t *testing.T) {
+	pluginID := "io.relayward.test"
+	request := &PublishEventsRequest{Events: []*PublishedEvent{
+		{SourceEventId: "event-1", NodeId: "10000000-0000-4000-8000-000000000001", Kind: "notification.request", ObservedAtUnixNano: 1,
+			Json: []byte(`{"severity":"warning","subject":"Node policy","body":"Quota exceeded","dedup_key":"quota:1"}`)},
+		{SourceEventId: "event-2", NodeId: "10000000-0000-4000-8000-000000000001", Kind: "plugin.io.relayward.test.risk", ObservedAtUnixNano: 2,
+			Json: []byte(`{"score":80}`)},
+	}}
+	response := &EventsPublished{EventCount: 2}
+	if err := ValidateEventsPublished(request, pluginID, response); err != nil {
+		t.Fatalf("ValidateEventsPublished() error = %v", err)
+	}
+
+	originalKind := request.Events[1].Kind
+	request.Events[1].Kind = "plugin.io.relayward.other.risk"
+	if err := ValidatePublishEventsRequest(&PublishEventsRequest{Events: []*PublishedEvent{request.Events[1]}}, pluginID); err == nil {
+		t.Fatal("ValidatePublishEventsRequest() accepted another plugin namespace")
+	}
+	request.Events[1].Kind = originalKind
+	response.EventCount = 1
+	if err := ValidateEventsPublished(request, pluginID, response); err == nil {
+		t.Fatal("ValidateEventsPublished() accepted a partial acknowledgement")
 	}
 }
 

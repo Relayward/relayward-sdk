@@ -313,6 +313,7 @@ var CenterPlugin_ServiceDesc = grpc.ServiceDesc{
 const (
 	PluginHost_ListNodes_FullMethodName       = "/relayward.centerplugin.v1.PluginHost/ListNodes"
 	PluginHost_ReplaceServices_FullMethodName = "/relayward.centerplugin.v1.PluginHost/ReplaceServices"
+	PluginHost_PublishEvents_FullMethodName   = "/relayward.centerplugin.v1.PluginHost/PublishEvents"
 )
 
 // PluginHostClient is the client API for PluginHost service.
@@ -321,6 +322,7 @@ const (
 type PluginHostClient interface {
 	ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error)
 	ReplaceServices(ctx context.Context, in *ReplaceServicesRequest, opts ...grpc.CallOption) (*ServicesReplaced, error)
+	PublishEvents(ctx context.Context, in *PublishEventsRequest, opts ...grpc.CallOption) (*EventsPublished, error)
 }
 
 type pluginHostClient struct {
@@ -351,12 +353,23 @@ func (c *pluginHostClient) ReplaceServices(ctx context.Context, in *ReplaceServi
 	return out, nil
 }
 
+func (c *pluginHostClient) PublishEvents(ctx context.Context, in *PublishEventsRequest, opts ...grpc.CallOption) (*EventsPublished, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EventsPublished)
+	err := c.cc.Invoke(ctx, PluginHost_PublishEvents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PluginHostServer is the server API for PluginHost service.
 // All implementations must embed UnimplementedPluginHostServer
 // for forward compatibility.
 type PluginHostServer interface {
 	ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error)
 	ReplaceServices(context.Context, *ReplaceServicesRequest) (*ServicesReplaced, error)
+	PublishEvents(context.Context, *PublishEventsRequest) (*EventsPublished, error)
 	mustEmbedUnimplementedPluginHostServer()
 }
 
@@ -372,6 +385,9 @@ func (UnimplementedPluginHostServer) ListNodes(context.Context, *ListNodesReques
 }
 func (UnimplementedPluginHostServer) ReplaceServices(context.Context, *ReplaceServicesRequest) (*ServicesReplaced, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReplaceServices not implemented")
+}
+func (UnimplementedPluginHostServer) PublishEvents(context.Context, *PublishEventsRequest) (*EventsPublished, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PublishEvents not implemented")
 }
 func (UnimplementedPluginHostServer) mustEmbedUnimplementedPluginHostServer() {}
 func (UnimplementedPluginHostServer) testEmbeddedByValue()                    {}
@@ -430,6 +446,24 @@ func _PluginHost_ReplaceServices_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PluginHost_PublishEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublishEventsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginHostServer).PublishEvents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PluginHost_PublishEvents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginHostServer).PublishEvents(ctx, req.(*PublishEventsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PluginHost_ServiceDesc is the grpc.ServiceDesc for PluginHost service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -444,6 +478,10 @@ var PluginHost_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReplaceServices",
 			Handler:    _PluginHost_ReplaceServices_Handler,
+		},
+		{
+			MethodName: "PublishEvents",
+			Handler:    _PluginHost_PublishEvents_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

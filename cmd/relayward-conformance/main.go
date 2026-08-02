@@ -66,6 +66,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 		_, err = conformance.LoadCenterPluginSubscription(args[1])
 	case "center-plugin-events":
 		_, err = conformance.LoadCenterPluginEvents(args[1])
+	case "center-plugin-published-events":
+		_, err = conformance.LoadCenterPluginPublishedEvents(args[1])
 	case "plugin-release":
 		_, err = conformance.VerifyPluginRelease(args[1])
 	default:
@@ -81,6 +83,6 @@ func run(args []string, stdout, stderr io.Writer) int {
 }
 
 func printUsage(writer io.Writer) {
-	fmt.Fprintln(writer, "usage: relayward-conformance <manifest|plugin-release|envelope|agent-register|agent-envelope|agent-event-batch|agent-event-ack|agent-plugin-reconcile|agent-plugin-status|agent-policy-reconcile|agent-traffic-snapshot|agent-access-event|node-plugin-info|center-plugin-info|center-plugin-activation|center-plugin-status|center-plugin-ui|center-plugin-nodes|center-plugin-services|center-plugin-subscription|center-plugin-events> <path>")
+	fmt.Fprintln(writer, "usage: relayward-conformance <manifest|plugin-release|envelope|agent-register|agent-envelope|agent-event-batch|agent-event-ack|agent-plugin-reconcile|agent-plugin-status|agent-policy-reconcile|agent-traffic-snapshot|agent-access-event|node-plugin-info|center-plugin-info|center-plugin-activation|center-plugin-status|center-plugin-ui|center-plugin-nodes|center-plugin-services|center-plugin-subscription|center-plugin-events|center-plugin-published-events> <path>")
 	fmt.Fprintln(writer, "       relayward-conformance version")
 }

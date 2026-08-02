@@ -23,6 +23,7 @@ const (
 
 	PermissionNodesRead     = "core.nodes.read"
 	PermissionEventsRead    = "core.events.read"
+	PermissionEventsWrite   = "core.events.write"
 	PermissionServicesWrite = "core.services.write"
 
 	MaximumStatusMessageBytes = 512
@@ -37,11 +38,12 @@ const (
 )
 
 var (
-	uiMethodPattern  = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$`)
-	serviceIDPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
-	uuidPattern      = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
-	sha256Pattern    = regexp.MustCompile(`^[0-9a-f]{64}$`)
-	eventKindPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$`)
+	uiMethodPattern      = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$`)
+	serviceIDPattern     = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
+	uuidPattern          = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
+	sha256Pattern        = regexp.MustCompile(`^[0-9a-f]{64}$`)
+	eventKindPattern     = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$`)
+	sourceEventIDPattern = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$`)
 )
 
 func ValidateInfoResponse(value *GetInfoResponse, expectedPluginID, expectedVersion string) error {
@@ -196,6 +198,70 @@ func ValidateServicesReplaced(request *ReplaceServicesRequest, response *Service
 	}
 	if int(response.ServiceCount) != len(request.Services) {
 		return fmt.Errorf("service_count: does not match the request")
+	}
+	return nil
+}
+
+func ValidatePublishEventsRequest(value *PublishEventsRequest, pluginID string) error {
+	if value == nil {
+		return fmt.Errorf("request: required")
+	}
+	if err := contract.ValidatePluginID(pluginID); err != nil {
+		return fmt.Errorf("plugin_id: %w", err)
+	}
+	if len(value.Events) == 0 || len(value.Events) > MaximumEventBatchEvents {
+		return fmt.Errorf("events: must contain 1 to %d values", MaximumEventBatchEvents)
+	}
+	previous := ""
+	totalBytes := 0
+	for index, event := range value.Events {
+		if event == nil {
+			return fmt.Errorf("events[%d]: required", index)
+		}
+		if !sourceEventIDPattern.MatchString(event.SourceEventId) {
+			return fmt.Errorf("events[%d].source_event_id: invalid source event ID", index)
+		}
+		if index > 0 && event.SourceEventId <= previous {
+			return fmt.Errorf("events: source event IDs must be sorted and unique")
+		}
+		previous = event.SourceEventId
+		if !uuidPattern.MatchString(event.NodeId) {
+			return fmt.Errorf("events[%d].node_id: invalid node ID", index)
+		}
+		if len(event.Kind) > 128 || !eventKindPattern.MatchString(event.Kind) {
+			return fmt.Errorf("events[%d].kind: invalid event kind", index)
+		}
+		if event.Kind != EventNotificationRequest && !strings.HasPrefix(event.Kind, "plugin."+pluginID+".") {
+			return fmt.Errorf("events[%d].kind: must use the publisher namespace", index)
+		}
+		if event.ObservedAtUnixNano == 0 {
+			return fmt.Errorf("events[%d].observed_at_unix_nano: must be set", index)
+		}
+		if len(event.Json) == 0 || len(event.Json) > MaximumEventPayloadBytes || !json.Valid(event.Json) {
+			return fmt.Errorf("events[%d].json: must contain at most %d bytes of valid JSON", index, MaximumEventPayloadBytes)
+		}
+		if event.Kind == EventNotificationRequest {
+			if _, err := DecodeNotificationRequest(event.Json); err != nil {
+				return fmt.Errorf("events[%d].json: %w", index, err)
+			}
+		}
+		totalBytes += len(event.Json)
+		if totalBytes > MaximumEventBatchBytes {
+			return fmt.Errorf("events: payloads exceed %d bytes", MaximumEventBatchBytes)
+		}
+	}
+	return nil
+}
+
+func ValidateEventsPublished(request *PublishEventsRequest, pluginID string, response *EventsPublished) error {
+	if err := ValidatePublishEventsRequest(request, pluginID); err != nil {
+		return err
+	}
+	if response == nil {
+		return fmt.Errorf("response: required")
+	}
+	if int(response.EventCount) != len(request.Events) {
+		return fmt.Errorf("event_count: does not match the request")
 	}
 	return nil
 }
@@ -359,7 +425,7 @@ func validatePermissions(values []string) error {
 		return fmt.Errorf("permissions: must be sorted")
 	}
 	for index, value := range values {
-		if value != PermissionEventsRead && value != PermissionNodesRead && value != PermissionServicesWrite {
+		if value != PermissionEventsRead && value != PermissionEventsWrite && value != PermissionNodesRead && value != PermissionServicesWrite {
 			return fmt.Errorf("permissions[%d]: unsupported permission %q", index, value)
 		}
 		if index > 0 && value == values[index-1] {

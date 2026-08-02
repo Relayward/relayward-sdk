@@ -6,6 +6,7 @@ The initial contract foundation provides:
 
 - a strict, versioned plugin release manifest;
 - the center-plugin lifecycle, permission-gated Host RPC, and sandbox UI bridge contracts;
+- idempotent plugin event publication and channel-neutral notification request contracts;
 - the node-plugin Unix-socket gRPC lifecycle and configuration API;
 - deterministic authorization periods, policy reconciliation, traffic, activity, service-control, and dynamic-blocking contracts;
 - explicit permission declarations and host API compatibility checks;
@@ -41,6 +42,7 @@ go run ./cmd/relayward-conformance agent-access-event fixtures/agent/access-even
 go run ./cmd/relayward-conformance node-plugin-info fixtures/node-plugin/info.json
 go run ./cmd/relayward-conformance center-plugin-services fixtures/center-plugin/services.json
 go run ./cmd/relayward-conformance center-plugin-subscription fixtures/center-plugin/subscription.json
+go run ./cmd/relayward-conformance center-plugin-published-events fixtures/center-plugin/published-events.json
 
 ```
 

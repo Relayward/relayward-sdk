@@ -1,0 +1,17 @@
+{
+  "plugin_id": "io.relayward.test",
+  "request": {
+    "events": [
+      {
+        "sourceEventId": "risk:10000000-0000-4000-8000-000000000001:2026-08-02T16",
+        "nodeId": "10000000-0000-4000-8000-000000000001",
+        "kind": "notification.request",
+        "observedAtUnixNano": "1785686400000000000",
+        "json": "eyJzZXZlcml0eSI6Indhcm5pbmciLCJzdWJqZWN0IjoiUmlzayB3aW5kb3ciLCJib2R5IjoiVGhlIG5vZGUgd2luZG93IHJlcXVpcmVzIHJldmlldy4iLCJkZWR1cF9rZXkiOiJyaXNrOjEwMDAwMDAwIn0="
+      }
+    ]
+  },
+  "response": {
+    "eventCount": 1
+  }
+}

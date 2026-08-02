@@ -224,6 +224,12 @@ type CenterPluginEventsFixture struct {
 	Response *centerpluginv1.EventsConsumed
 }
 
+type CenterPluginPublishedEventsFixture struct {
+	PluginID string
+	Request  *centerpluginv1.PublishEventsRequest
+	Response *centerpluginv1.EventsPublished
+}
+
 func LoadCenterPluginEvents(path string) (CenterPluginEventsFixture, error) {
 	file, err := openContractFile(path)
 	if err != nil {
@@ -249,6 +255,36 @@ func LoadCenterPluginEvents(path string) (CenterPluginEventsFixture, error) {
 	}
 	if err := centerpluginv1.ValidateEventsConsumed(value.Request, value.Response); err != nil {
 		return CenterPluginEventsFixture{}, err
+	}
+	return value, nil
+}
+
+func LoadCenterPluginPublishedEvents(path string) (CenterPluginPublishedEventsFixture, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return CenterPluginPublishedEventsFixture{}, fmt.Errorf("open center plugin published events: %w", err)
+	}
+	defer file.Close()
+	var raw struct {
+		PluginID string          `json:"plugin_id"`
+		Request  json.RawMessage `json:"request"`
+		Response json.RawMessage `json:"response"`
+	}
+	if err := decodeContractJSON(file, &raw); err != nil {
+		return CenterPluginPublishedEventsFixture{}, fmt.Errorf("decode center plugin published events: %w", err)
+	}
+	value := CenterPluginPublishedEventsFixture{
+		PluginID: raw.PluginID, Request: &centerpluginv1.PublishEventsRequest{}, Response: &centerpluginv1.EventsPublished{},
+	}
+	unmarshal := protojson.UnmarshalOptions{DiscardUnknown: false}
+	if err := unmarshal.Unmarshal(raw.Request, value.Request); err != nil {
+		return CenterPluginPublishedEventsFixture{}, fmt.Errorf("decode center plugin publish request: %w", err)
+	}
+	if err := unmarshal.Unmarshal(raw.Response, value.Response); err != nil {
+		return CenterPluginPublishedEventsFixture{}, fmt.Errorf("decode center plugin publish response: %w", err)
+	}
+	if err := centerpluginv1.ValidateEventsPublished(value.Request, value.PluginID, value.Response); err != nil {
+		return CenterPluginPublishedEventsFixture{}, err
 	}
 	return value, nil
 }
