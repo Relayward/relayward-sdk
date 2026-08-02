@@ -58,14 +58,15 @@ type PluginReconcileOutput struct {
 }
 
 type PluginStatusEvent struct {
-	PluginID            string `json:"plugin_id"`
-	Generation          uint64 `json:"generation"`
-	State               string `json:"state"`
-	Version             string `json:"version,omitempty"`
-	ConfigurationSHA256 string `json:"configuration_sha256,omitempty"`
-	Health              string `json:"health"`
-	Reason              string `json:"reason,omitempty"`
-	RestartCount        uint64 `json:"restart_count"`
+	PluginID            string   `json:"plugin_id"`
+	Generation          uint64   `json:"generation"`
+	State               string   `json:"state"`
+	Version             string   `json:"version,omitempty"`
+	ConfigurationSHA256 string   `json:"configuration_sha256,omitempty"`
+	Health              string   `json:"health"`
+	Reason              string   `json:"reason,omitempty"`
+	RestartCount        uint64   `json:"restart_count"`
+	Capabilities        []string `json:"capabilities,omitempty"`
 }
 
 func NewPluginReconcileCommand(value PluginReconcileCommand, issuedAt, expiresAt time.Time) (Command, error) {
@@ -205,6 +206,9 @@ func ValidatePluginStatusEvent(value PluginStatusEvent) error {
 	if err := validateStatusReason(value.Reason); err != nil {
 		return err
 	}
+	if err := validateCapabilities(value.Capabilities); err != nil {
+		return err
+	}
 	switch value.State {
 	case PluginStateRunning:
 		if value.Health != PluginHealthHealthy {
@@ -215,6 +219,9 @@ func ValidatePluginStatusEvent(value PluginStatusEvent) error {
 		if value.Health != PluginHealthUnknown {
 			return fmt.Errorf("health: stopped or absent plugins must use unknown")
 		}
+		if len(value.Capabilities) != 0 {
+			return fmt.Errorf("capabilities: stopped or absent plugins must not report capabilities")
+		}
 		return validateObservedPluginState(value.State, value.Version, value.ConfigurationSHA256)
 	case PluginStateFailed:
 		if value.Health != PluginHealthUnhealthy {
@@ -222,6 +229,9 @@ func ValidatePluginStatusEvent(value PluginStatusEvent) error {
 		}
 		if value.Reason == "" {
 			return fmt.Errorf("reason: required for failed plugins")
+		}
+		if len(value.Capabilities) != 0 {
+			return fmt.Errorf("capabilities: failed plugins must not report capabilities")
 		}
 		if (value.Version == "") != (value.ConfigurationSHA256 == "") {
 			return fmt.Errorf("version and configuration_sha256 must either both be present or both be absent")

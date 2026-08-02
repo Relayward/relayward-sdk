@@ -1,0 +1,12 @@
+{
+  "source_event_id": "access-42",
+  "plugin_id": "io.relayward.contract-test",
+  "service_id": "main",
+  "authorization_id": "123e4567-e89b-42d3-a456-426614174000",
+  "source_ip": "192.0.2.10",
+  "destination": "example.com",
+  "destination_port": 443,
+  "network": "tcp",
+  "protocol": "tls",
+  "action": "accepted"
+}

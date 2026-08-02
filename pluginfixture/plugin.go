@@ -9,6 +9,7 @@ import (
 	"os"
 	"sort"
 	"sync"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -167,7 +168,32 @@ func runNode(socket, version string) int {
 func (plugin *nodePlugin) GetInfo(context.Context, *nodepluginv1.GetInfoRequest) (*nodepluginv1.GetInfoResponse, error) {
 	return &nodepluginv1.GetInfoResponse{
 		ApiVersion: contract.NodePluginAPIVersion, PluginId: plugin.pluginID, Version: plugin.version,
+		Capabilities: []string{nodepluginv1.CapabilityRecentActivity, nodepluginv1.CapabilityDynamicBlocking,
+			nodepluginv1.CapabilityServiceControl, nodepluginv1.CapabilityTrafficCounters},
 	}, nil
+}
+
+func (*nodePlugin) CollectTelemetry(_ context.Context, request *nodepluginv1.CollectTelemetryRequest) (*nodepluginv1.CollectTelemetryResponse, error) {
+	if err := nodepluginv1.ValidateCollectTelemetryRequest(request); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid telemetry request")
+	}
+	return &nodepluginv1.CollectTelemetryResponse{ObservedAtUnixNano: time.Now().UTC().UnixNano(), NextSequence: request.AfterSequence}, nil
+}
+
+func (*nodePlugin) SetServiceState(_ context.Context, request *nodepluginv1.SetServiceStateRequest) (*nodepluginv1.SetServiceStateResponse, error) {
+	if err := nodepluginv1.ValidateSetServiceStateRequest(request); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid service state")
+	}
+	return &nodepluginv1.SetServiceStateResponse{PolicyGeneration: request.PolicyGeneration, StateRevision: request.StateRevision, AuthorizationId: request.AuthorizationId,
+		ServiceId: request.ServiceId, Enabled: request.Enabled, Reason: request.Reason}, nil
+}
+
+func (*nodePlugin) ReplaceDynamicBlocks(_ context.Context, request *nodepluginv1.ReplaceDynamicBlocksRequest) (*nodepluginv1.ReplaceDynamicBlocksResponse, error) {
+	if err := nodepluginv1.ValidateReplaceDynamicBlocksRequest(request); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid dynamic block set")
+	}
+	return &nodepluginv1.ReplaceDynamicBlocksResponse{PolicyGeneration: request.PolicyGeneration,
+		BlockRevision: request.BlockRevision, BlockCount: uint32(len(request.Blocks))}, nil
 }
 
 func (*nodePlugin) ValidateConfiguration(_ context.Context, request *nodepluginv1.ConfigurationRequest) (*nodepluginv1.ConfigurationValidated, error) {

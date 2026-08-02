@@ -14,6 +14,7 @@ var (
 	messageIDPattern    = regexp.MustCompile(`^[0-9a-f]{32}$`)
 	agentVersionPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$`)
 	capabilityPattern   = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$`)
+	componentIDPattern  = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
 )
 
 func validateAgentVersion(value string) error {

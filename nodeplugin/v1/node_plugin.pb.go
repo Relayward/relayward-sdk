@@ -73,6 +73,61 @@ func (Health) EnumDescriptor() ([]byte, []int) {
 	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{0}
 }
 
+type ServiceStateReason int32
+
+const (
+	ServiceStateReason_SERVICE_STATE_REASON_UNSPECIFIED            ServiceStateReason = 0
+	ServiceStateReason_SERVICE_STATE_REASON_ACTIVE                 ServiceStateReason = 1
+	ServiceStateReason_SERVICE_STATE_REASON_ADMINISTRATOR_DISABLED ServiceStateReason = 2
+	ServiceStateReason_SERVICE_STATE_REASON_EXPIRED                ServiceStateReason = 3
+	ServiceStateReason_SERVICE_STATE_REASON_QUOTA_EXCEEDED         ServiceStateReason = 4
+)
+
+// Enum value maps for ServiceStateReason.
+var (
+	ServiceStateReason_name = map[int32]string{
+		0: "SERVICE_STATE_REASON_UNSPECIFIED",
+		1: "SERVICE_STATE_REASON_ACTIVE",
+		2: "SERVICE_STATE_REASON_ADMINISTRATOR_DISABLED",
+		3: "SERVICE_STATE_REASON_EXPIRED",
+		4: "SERVICE_STATE_REASON_QUOTA_EXCEEDED",
+	}
+	ServiceStateReason_value = map[string]int32{
+		"SERVICE_STATE_REASON_UNSPECIFIED":            0,
+		"SERVICE_STATE_REASON_ACTIVE":                 1,
+		"SERVICE_STATE_REASON_ADMINISTRATOR_DISABLED": 2,
+		"SERVICE_STATE_REASON_EXPIRED":                3,
+		"SERVICE_STATE_REASON_QUOTA_EXCEEDED":         4,
+	}
+)
+
+func (x ServiceStateReason) Enum() *ServiceStateReason {
+	p := new(ServiceStateReason)
+	*p = x
+	return p
+}
+
+func (x ServiceStateReason) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ServiceStateReason) Descriptor() protoreflect.EnumDescriptor {
+	return file_nodeplugin_v1_node_plugin_proto_enumTypes[1].Descriptor()
+}
+
+func (ServiceStateReason) Type() protoreflect.EnumType {
+	return &file_nodeplugin_v1_node_plugin_proto_enumTypes[1]
+}
+
+func (x ServiceStateReason) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ServiceStateReason.Descriptor instead.
+func (ServiceStateReason) EnumDescriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{1}
+}
+
 type GetInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -114,6 +169,7 @@ type GetInfoResponse struct {
 	ApiVersion    string                 `protobuf:"bytes,1,opt,name=api_version,json=apiVersion,proto3" json:"api_version,omitempty"`
 	PluginId      string                 `protobuf:"bytes,2,opt,name=plugin_id,json=pluginId,proto3" json:"plugin_id,omitempty"`
 	Version       string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Capabilities  []string               `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -167,6 +223,13 @@ func (x *GetInfoResponse) GetVersion() string {
 		return x.Version
 	}
 	return ""
+}
+
+func (x *GetInfoResponse) GetCapabilities() []string {
+	if x != nil {
+		return x.Capabilities
+	}
+	return nil
 }
 
 type ConfigurationRequest struct {
@@ -437,17 +500,702 @@ func (x *GetStatusResponse) GetMessage() string {
 	return ""
 }
 
+type CollectTelemetryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AfterSequence uint64                 `protobuf:"varint,1,opt,name=after_sequence,json=afterSequence,proto3" json:"after_sequence,omitempty"`
+	MaximumEvents uint32                 `protobuf:"varint,2,opt,name=maximum_events,json=maximumEvents,proto3" json:"maximum_events,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CollectTelemetryRequest) Reset() {
+	*x = CollectTelemetryRequest{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CollectTelemetryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CollectTelemetryRequest) ProtoMessage() {}
+
+func (x *CollectTelemetryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CollectTelemetryRequest.ProtoReflect.Descriptor instead.
+func (*CollectTelemetryRequest) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CollectTelemetryRequest) GetAfterSequence() uint64 {
+	if x != nil {
+		return x.AfterSequence
+	}
+	return 0
+}
+
+func (x *CollectTelemetryRequest) GetMaximumEvents() uint32 {
+	if x != nil {
+		return x.MaximumEvents
+	}
+	return 0
+}
+
+type TrafficCounter struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	AuthorizationId string                 `protobuf:"bytes,1,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
+	ServiceId       string                 `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	CounterEpoch    string                 `protobuf:"bytes,3,opt,name=counter_epoch,json=counterEpoch,proto3" json:"counter_epoch,omitempty"`
+	UploadBytes     uint64                 `protobuf:"varint,4,opt,name=upload_bytes,json=uploadBytes,proto3" json:"upload_bytes,omitempty"`
+	DownloadBytes   uint64                 `protobuf:"varint,5,opt,name=download_bytes,json=downloadBytes,proto3" json:"download_bytes,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *TrafficCounter) Reset() {
+	*x = TrafficCounter{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TrafficCounter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TrafficCounter) ProtoMessage() {}
+
+func (x *TrafficCounter) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TrafficCounter.ProtoReflect.Descriptor instead.
+func (*TrafficCounter) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *TrafficCounter) GetAuthorizationId() string {
+	if x != nil {
+		return x.AuthorizationId
+	}
+	return ""
+}
+
+func (x *TrafficCounter) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *TrafficCounter) GetCounterEpoch() string {
+	if x != nil {
+		return x.CounterEpoch
+	}
+	return ""
+}
+
+func (x *TrafficCounter) GetUploadBytes() uint64 {
+	if x != nil {
+		return x.UploadBytes
+	}
+	return 0
+}
+
+func (x *TrafficCounter) GetDownloadBytes() uint64 {
+	if x != nil {
+		return x.DownloadBytes
+	}
+	return 0
+}
+
+type AccessEvent struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Sequence           uint64                 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	EventId            string                 `protobuf:"bytes,2,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	ObservedAtUnixNano int64                  `protobuf:"varint,3,opt,name=observed_at_unix_nano,json=observedAtUnixNano,proto3" json:"observed_at_unix_nano,omitempty"`
+	AuthorizationId    string                 `protobuf:"bytes,4,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
+	ServiceId          string                 `protobuf:"bytes,5,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	SourceIp           string                 `protobuf:"bytes,6,opt,name=source_ip,json=sourceIp,proto3" json:"source_ip,omitempty"`
+	Destination        string                 `protobuf:"bytes,7,opt,name=destination,proto3" json:"destination,omitempty"`
+	DestinationPort    uint32                 `protobuf:"varint,8,opt,name=destination_port,json=destinationPort,proto3" json:"destination_port,omitempty"`
+	Network            string                 `protobuf:"bytes,9,opt,name=network,proto3" json:"network,omitempty"`
+	Protocol           string                 `protobuf:"bytes,10,opt,name=protocol,proto3" json:"protocol,omitempty"`
+	Action             string                 `protobuf:"bytes,11,opt,name=action,proto3" json:"action,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *AccessEvent) Reset() {
+	*x = AccessEvent{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AccessEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AccessEvent) ProtoMessage() {}
+
+func (x *AccessEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AccessEvent.ProtoReflect.Descriptor instead.
+func (*AccessEvent) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *AccessEvent) GetSequence() uint64 {
+	if x != nil {
+		return x.Sequence
+	}
+	return 0
+}
+
+func (x *AccessEvent) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetObservedAtUnixNano() int64 {
+	if x != nil {
+		return x.ObservedAtUnixNano
+	}
+	return 0
+}
+
+func (x *AccessEvent) GetAuthorizationId() string {
+	if x != nil {
+		return x.AuthorizationId
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetSourceIp() string {
+	if x != nil {
+		return x.SourceIp
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetDestination() string {
+	if x != nil {
+		return x.Destination
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetDestinationPort() uint32 {
+	if x != nil {
+		return x.DestinationPort
+	}
+	return 0
+}
+
+func (x *AccessEvent) GetNetwork() string {
+	if x != nil {
+		return x.Network
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetProtocol() string {
+	if x != nil {
+		return x.Protocol
+	}
+	return ""
+}
+
+func (x *AccessEvent) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+type CollectTelemetryResponse struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	ObservedAtUnixNano int64                  `protobuf:"varint,1,opt,name=observed_at_unix_nano,json=observedAtUnixNano,proto3" json:"observed_at_unix_nano,omitempty"`
+	Counters           []*TrafficCounter      `protobuf:"bytes,2,rep,name=counters,proto3" json:"counters,omitempty"`
+	Events             []*AccessEvent         `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
+	NextSequence       uint64                 `protobuf:"varint,4,opt,name=next_sequence,json=nextSequence,proto3" json:"next_sequence,omitempty"`
+	HasMore            bool                   `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *CollectTelemetryResponse) Reset() {
+	*x = CollectTelemetryResponse{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CollectTelemetryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CollectTelemetryResponse) ProtoMessage() {}
+
+func (x *CollectTelemetryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CollectTelemetryResponse.ProtoReflect.Descriptor instead.
+func (*CollectTelemetryResponse) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CollectTelemetryResponse) GetObservedAtUnixNano() int64 {
+	if x != nil {
+		return x.ObservedAtUnixNano
+	}
+	return 0
+}
+
+func (x *CollectTelemetryResponse) GetCounters() []*TrafficCounter {
+	if x != nil {
+		return x.Counters
+	}
+	return nil
+}
+
+func (x *CollectTelemetryResponse) GetEvents() []*AccessEvent {
+	if x != nil {
+		return x.Events
+	}
+	return nil
+}
+
+func (x *CollectTelemetryResponse) GetNextSequence() uint64 {
+	if x != nil {
+		return x.NextSequence
+	}
+	return 0
+}
+
+func (x *CollectTelemetryResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+type SetServiceStateRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	PolicyGeneration uint64                 `protobuf:"varint,1,opt,name=policy_generation,json=policyGeneration,proto3" json:"policy_generation,omitempty"`
+	StateRevision    uint64                 `protobuf:"varint,2,opt,name=state_revision,json=stateRevision,proto3" json:"state_revision,omitempty"`
+	AuthorizationId  string                 `protobuf:"bytes,3,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
+	ServiceId        string                 `protobuf:"bytes,4,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	Enabled          bool                   `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Reason           ServiceStateReason     `protobuf:"varint,6,opt,name=reason,proto3,enum=relayward.nodeplugin.v1.ServiceStateReason" json:"reason,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SetServiceStateRequest) Reset() {
+	*x = SetServiceStateRequest{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetServiceStateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetServiceStateRequest) ProtoMessage() {}
+
+func (x *SetServiceStateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetServiceStateRequest.ProtoReflect.Descriptor instead.
+func (*SetServiceStateRequest) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *SetServiceStateRequest) GetPolicyGeneration() uint64 {
+	if x != nil {
+		return x.PolicyGeneration
+	}
+	return 0
+}
+
+func (x *SetServiceStateRequest) GetStateRevision() uint64 {
+	if x != nil {
+		return x.StateRevision
+	}
+	return 0
+}
+
+func (x *SetServiceStateRequest) GetAuthorizationId() string {
+	if x != nil {
+		return x.AuthorizationId
+	}
+	return ""
+}
+
+func (x *SetServiceStateRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *SetServiceStateRequest) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *SetServiceStateRequest) GetReason() ServiceStateReason {
+	if x != nil {
+		return x.Reason
+	}
+	return ServiceStateReason_SERVICE_STATE_REASON_UNSPECIFIED
+}
+
+type SetServiceStateResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	PolicyGeneration uint64                 `protobuf:"varint,1,opt,name=policy_generation,json=policyGeneration,proto3" json:"policy_generation,omitempty"`
+	StateRevision    uint64                 `protobuf:"varint,2,opt,name=state_revision,json=stateRevision,proto3" json:"state_revision,omitempty"`
+	AuthorizationId  string                 `protobuf:"bytes,3,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
+	ServiceId        string                 `protobuf:"bytes,4,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	Enabled          bool                   `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Reason           ServiceStateReason     `protobuf:"varint,6,opt,name=reason,proto3,enum=relayward.nodeplugin.v1.ServiceStateReason" json:"reason,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SetServiceStateResponse) Reset() {
+	*x = SetServiceStateResponse{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetServiceStateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetServiceStateResponse) ProtoMessage() {}
+
+func (x *SetServiceStateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetServiceStateResponse.ProtoReflect.Descriptor instead.
+func (*SetServiceStateResponse) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *SetServiceStateResponse) GetPolicyGeneration() uint64 {
+	if x != nil {
+		return x.PolicyGeneration
+	}
+	return 0
+}
+
+func (x *SetServiceStateResponse) GetStateRevision() uint64 {
+	if x != nil {
+		return x.StateRevision
+	}
+	return 0
+}
+
+func (x *SetServiceStateResponse) GetAuthorizationId() string {
+	if x != nil {
+		return x.AuthorizationId
+	}
+	return ""
+}
+
+func (x *SetServiceStateResponse) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *SetServiceStateResponse) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *SetServiceStateResponse) GetReason() ServiceStateReason {
+	if x != nil {
+		return x.Reason
+	}
+	return ServiceStateReason_SERVICE_STATE_REASON_UNSPECIFIED
+}
+
+type DynamicBlock struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	AuthorizationId   string                 `protobuf:"bytes,1,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
+	ServiceId         string                 `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	SourceIp          string                 `protobuf:"bytes,3,opt,name=source_ip,json=sourceIp,proto3" json:"source_ip,omitempty"`
+	ExpiresAtUnixNano int64                  `protobuf:"varint,4,opt,name=expires_at_unix_nano,json=expiresAtUnixNano,proto3" json:"expires_at_unix_nano,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *DynamicBlock) Reset() {
+	*x = DynamicBlock{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DynamicBlock) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DynamicBlock) ProtoMessage() {}
+
+func (x *DynamicBlock) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DynamicBlock.ProtoReflect.Descriptor instead.
+func (*DynamicBlock) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *DynamicBlock) GetAuthorizationId() string {
+	if x != nil {
+		return x.AuthorizationId
+	}
+	return ""
+}
+
+func (x *DynamicBlock) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *DynamicBlock) GetSourceIp() string {
+	if x != nil {
+		return x.SourceIp
+	}
+	return ""
+}
+
+func (x *DynamicBlock) GetExpiresAtUnixNano() int64 {
+	if x != nil {
+		return x.ExpiresAtUnixNano
+	}
+	return 0
+}
+
+type ReplaceDynamicBlocksRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	PolicyGeneration uint64                 `protobuf:"varint,1,opt,name=policy_generation,json=policyGeneration,proto3" json:"policy_generation,omitempty"`
+	BlockRevision    uint64                 `protobuf:"varint,2,opt,name=block_revision,json=blockRevision,proto3" json:"block_revision,omitempty"`
+	Blocks           []*DynamicBlock        `protobuf:"bytes,3,rep,name=blocks,proto3" json:"blocks,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ReplaceDynamicBlocksRequest) Reset() {
+	*x = ReplaceDynamicBlocksRequest{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplaceDynamicBlocksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplaceDynamicBlocksRequest) ProtoMessage() {}
+
+func (x *ReplaceDynamicBlocksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplaceDynamicBlocksRequest.ProtoReflect.Descriptor instead.
+func (*ReplaceDynamicBlocksRequest) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ReplaceDynamicBlocksRequest) GetPolicyGeneration() uint64 {
+	if x != nil {
+		return x.PolicyGeneration
+	}
+	return 0
+}
+
+func (x *ReplaceDynamicBlocksRequest) GetBlockRevision() uint64 {
+	if x != nil {
+		return x.BlockRevision
+	}
+	return 0
+}
+
+func (x *ReplaceDynamicBlocksRequest) GetBlocks() []*DynamicBlock {
+	if x != nil {
+		return x.Blocks
+	}
+	return nil
+}
+
+type ReplaceDynamicBlocksResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	PolicyGeneration uint64                 `protobuf:"varint,1,opt,name=policy_generation,json=policyGeneration,proto3" json:"policy_generation,omitempty"`
+	BlockRevision    uint64                 `protobuf:"varint,2,opt,name=block_revision,json=blockRevision,proto3" json:"block_revision,omitempty"`
+	BlockCount       uint32                 `protobuf:"varint,3,opt,name=block_count,json=blockCount,proto3" json:"block_count,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ReplaceDynamicBlocksResponse) Reset() {
+	*x = ReplaceDynamicBlocksResponse{}
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplaceDynamicBlocksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplaceDynamicBlocksResponse) ProtoMessage() {}
+
+func (x *ReplaceDynamicBlocksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nodeplugin_v1_node_plugin_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplaceDynamicBlocksResponse.ProtoReflect.Descriptor instead.
+func (*ReplaceDynamicBlocksResponse) Descriptor() ([]byte, []int) {
+	return file_nodeplugin_v1_node_plugin_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ReplaceDynamicBlocksResponse) GetPolicyGeneration() uint64 {
+	if x != nil {
+		return x.PolicyGeneration
+	}
+	return 0
+}
+
+func (x *ReplaceDynamicBlocksResponse) GetBlockRevision() uint64 {
+	if x != nil {
+		return x.BlockRevision
+	}
+	return 0
+}
+
+func (x *ReplaceDynamicBlocksResponse) GetBlockCount() uint32 {
+	if x != nil {
+		return x.BlockCount
+	}
+	return 0
+}
+
 var File_nodeplugin_v1_node_plugin_proto protoreflect.FileDescriptor
 
 const file_nodeplugin_v1_node_plugin_proto_rawDesc = "" +
 	"\n" +
 	"\x1fnodeplugin/v1/node_plugin.proto\x12\x17relayward.nodeplugin.v1\"\x10\n" +
-	"\x0eGetInfoRequest\"i\n" +
+	"\x0eGetInfoRequest\"\x8d\x01\n" +
 	"\x0fGetInfoResponse\x12\x1f\n" +
 	"\vapi_version\x18\x01 \x01(\tR\n" +
 	"apiVersion\x12\x1b\n" +
 	"\tplugin_id\x18\x02 \x01(\tR\bpluginId\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\tR\aversion\"b\n" +
+	"\aversion\x18\x03 \x01(\tR\aversion\x12\"\n" +
+	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\"b\n" +
 	"\x14ConfigurationRequest\x12\x1e\n" +
 	"\n" +
 	"generation\x18\x01 \x01(\x04R\n" +
@@ -471,18 +1219,88 @@ const file_nodeplugin_v1_node_plugin_proto_rawDesc = "" +
 	"generation\x121\n" +
 	"\x14configuration_sha256\x18\x02 \x01(\tR\x13configurationSha256\x127\n" +
 	"\x06health\x18\x03 \x01(\x0e2\x1f.relayward.nodeplugin.v1.HealthR\x06health\x12\x18\n" +
-	"\amessage\x18\x04 \x01(\tR\amessage*_\n" +
+	"\amessage\x18\x04 \x01(\tR\amessage\"g\n" +
+	"\x17CollectTelemetryRequest\x12%\n" +
+	"\x0eafter_sequence\x18\x01 \x01(\x04R\rafterSequence\x12%\n" +
+	"\x0emaximum_events\x18\x02 \x01(\rR\rmaximumEvents\"\xc9\x01\n" +
+	"\x0eTrafficCounter\x12)\n" +
+	"\x10authorization_id\x18\x01 \x01(\tR\x0fauthorizationId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\x12#\n" +
+	"\rcounter_epoch\x18\x03 \x01(\tR\fcounterEpoch\x12!\n" +
+	"\fupload_bytes\x18\x04 \x01(\x04R\vuploadBytes\x12%\n" +
+	"\x0edownload_bytes\x18\x05 \x01(\x04R\rdownloadBytes\"\xf9\x02\n" +
+	"\vAccessEvent\x12\x1a\n" +
+	"\bsequence\x18\x01 \x01(\x04R\bsequence\x12\x19\n" +
+	"\bevent_id\x18\x02 \x01(\tR\aeventId\x121\n" +
+	"\x15observed_at_unix_nano\x18\x03 \x01(\x03R\x12observedAtUnixNano\x12)\n" +
+	"\x10authorization_id\x18\x04 \x01(\tR\x0fauthorizationId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x05 \x01(\tR\tserviceId\x12\x1b\n" +
+	"\tsource_ip\x18\x06 \x01(\tR\bsourceIp\x12 \n" +
+	"\vdestination\x18\a \x01(\tR\vdestination\x12)\n" +
+	"\x10destination_port\x18\b \x01(\rR\x0fdestinationPort\x12\x18\n" +
+	"\anetwork\x18\t \x01(\tR\anetwork\x12\x1a\n" +
+	"\bprotocol\x18\n" +
+	" \x01(\tR\bprotocol\x12\x16\n" +
+	"\x06action\x18\v \x01(\tR\x06action\"\x90\x02\n" +
+	"\x18CollectTelemetryResponse\x121\n" +
+	"\x15observed_at_unix_nano\x18\x01 \x01(\x03R\x12observedAtUnixNano\x12C\n" +
+	"\bcounters\x18\x02 \x03(\v2'.relayward.nodeplugin.v1.TrafficCounterR\bcounters\x12<\n" +
+	"\x06events\x18\x03 \x03(\v2$.relayward.nodeplugin.v1.AccessEventR\x06events\x12#\n" +
+	"\rnext_sequence\x18\x04 \x01(\x04R\fnextSequence\x12\x19\n" +
+	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\x95\x02\n" +
+	"\x16SetServiceStateRequest\x12+\n" +
+	"\x11policy_generation\x18\x01 \x01(\x04R\x10policyGeneration\x12%\n" +
+	"\x0estate_revision\x18\x02 \x01(\x04R\rstateRevision\x12)\n" +
+	"\x10authorization_id\x18\x03 \x01(\tR\x0fauthorizationId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x04 \x01(\tR\tserviceId\x12\x18\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\x12C\n" +
+	"\x06reason\x18\x06 \x01(\x0e2+.relayward.nodeplugin.v1.ServiceStateReasonR\x06reason\"\x96\x02\n" +
+	"\x17SetServiceStateResponse\x12+\n" +
+	"\x11policy_generation\x18\x01 \x01(\x04R\x10policyGeneration\x12%\n" +
+	"\x0estate_revision\x18\x02 \x01(\x04R\rstateRevision\x12)\n" +
+	"\x10authorization_id\x18\x03 \x01(\tR\x0fauthorizationId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x04 \x01(\tR\tserviceId\x12\x18\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\x12C\n" +
+	"\x06reason\x18\x06 \x01(\x0e2+.relayward.nodeplugin.v1.ServiceStateReasonR\x06reason\"\xa6\x01\n" +
+	"\fDynamicBlock\x12)\n" +
+	"\x10authorization_id\x18\x01 \x01(\tR\x0fauthorizationId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\x12\x1b\n" +
+	"\tsource_ip\x18\x03 \x01(\tR\bsourceIp\x12/\n" +
+	"\x14expires_at_unix_nano\x18\x04 \x01(\x03R\x11expiresAtUnixNano\"\xb0\x01\n" +
+	"\x1bReplaceDynamicBlocksRequest\x12+\n" +
+	"\x11policy_generation\x18\x01 \x01(\x04R\x10policyGeneration\x12%\n" +
+	"\x0eblock_revision\x18\x02 \x01(\x04R\rblockRevision\x12=\n" +
+	"\x06blocks\x18\x03 \x03(\v2%.relayward.nodeplugin.v1.DynamicBlockR\x06blocks\"\x93\x01\n" +
+	"\x1cReplaceDynamicBlocksResponse\x12+\n" +
+	"\x11policy_generation\x18\x01 \x01(\x04R\x10policyGeneration\x12%\n" +
+	"\x0eblock_revision\x18\x02 \x01(\x04R\rblockRevision\x12\x1f\n" +
+	"\vblock_count\x18\x03 \x01(\rR\n" +
+	"blockCount*_\n" +
 	"\x06Health\x12\x16\n" +
 	"\x12HEALTH_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fHEALTH_STARTING\x10\x01\x12\x12\n" +
 	"\x0eHEALTH_HEALTHY\x10\x02\x12\x14\n" +
-	"\x10HEALTH_UNHEALTHY\x10\x032\xbb\x03\n" +
+	"\x10HEALTH_UNHEALTHY\x10\x03*\xd7\x01\n" +
+	"\x12ServiceStateReason\x12$\n" +
+	" SERVICE_STATE_REASON_UNSPECIFIED\x10\x00\x12\x1f\n" +
+	"\x1bSERVICE_STATE_REASON_ACTIVE\x10\x01\x12/\n" +
+	"+SERVICE_STATE_REASON_ADMINISTRATOR_DISABLED\x10\x02\x12 \n" +
+	"\x1cSERVICE_STATE_REASON_EXPIRED\x10\x03\x12'\n" +
+	"#SERVICE_STATE_REASON_QUOTA_EXCEEDED\x10\x042\xb0\x06\n" +
 	"\n" +
 	"NodePlugin\x12\\\n" +
 	"\aGetInfo\x12'.relayward.nodeplugin.v1.GetInfoRequest\x1a(.relayward.nodeplugin.v1.GetInfoResponse\x12w\n" +
 	"\x15ValidateConfiguration\x12-.relayward.nodeplugin.v1.ConfigurationRequest\x1a/.relayward.nodeplugin.v1.ConfigurationValidated\x12r\n" +
 	"\x12ApplyConfiguration\x12-.relayward.nodeplugin.v1.ConfigurationRequest\x1a-.relayward.nodeplugin.v1.ConfigurationApplied\x12b\n" +
-	"\tGetStatus\x12).relayward.nodeplugin.v1.GetStatusRequest\x1a*.relayward.nodeplugin.v1.GetStatusResponseB?Z=github.com/Relayward/relayward-sdk/nodeplugin/v1;nodepluginv1b\x06proto3"
+	"\tGetStatus\x12).relayward.nodeplugin.v1.GetStatusRequest\x1a*.relayward.nodeplugin.v1.GetStatusResponse\x12w\n" +
+	"\x10CollectTelemetry\x120.relayward.nodeplugin.v1.CollectTelemetryRequest\x1a1.relayward.nodeplugin.v1.CollectTelemetryResponse\x12t\n" +
+	"\x0fSetServiceState\x12/.relayward.nodeplugin.v1.SetServiceStateRequest\x1a0.relayward.nodeplugin.v1.SetServiceStateResponse\x12\x83\x01\n" +
+	"\x14ReplaceDynamicBlocks\x124.relayward.nodeplugin.v1.ReplaceDynamicBlocksRequest\x1a5.relayward.nodeplugin.v1.ReplaceDynamicBlocksResponseB?Z=github.com/Relayward/relayward-sdk/nodeplugin/v1;nodepluginv1b\x06proto3"
 
 var (
 	file_nodeplugin_v1_node_plugin_proto_rawDescOnce sync.Once
@@ -496,33 +1314,54 @@ func file_nodeplugin_v1_node_plugin_proto_rawDescGZIP() []byte {
 	return file_nodeplugin_v1_node_plugin_proto_rawDescData
 }
 
-var file_nodeplugin_v1_node_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_nodeplugin_v1_node_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_nodeplugin_v1_node_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_nodeplugin_v1_node_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_nodeplugin_v1_node_plugin_proto_goTypes = []any{
-	(Health)(0),                    // 0: relayward.nodeplugin.v1.Health
-	(*GetInfoRequest)(nil),         // 1: relayward.nodeplugin.v1.GetInfoRequest
-	(*GetInfoResponse)(nil),        // 2: relayward.nodeplugin.v1.GetInfoResponse
-	(*ConfigurationRequest)(nil),   // 3: relayward.nodeplugin.v1.ConfigurationRequest
-	(*ConfigurationValidated)(nil), // 4: relayward.nodeplugin.v1.ConfigurationValidated
-	(*ConfigurationApplied)(nil),   // 5: relayward.nodeplugin.v1.ConfigurationApplied
-	(*GetStatusRequest)(nil),       // 6: relayward.nodeplugin.v1.GetStatusRequest
-	(*GetStatusResponse)(nil),      // 7: relayward.nodeplugin.v1.GetStatusResponse
+	(Health)(0),                          // 0: relayward.nodeplugin.v1.Health
+	(ServiceStateReason)(0),              // 1: relayward.nodeplugin.v1.ServiceStateReason
+	(*GetInfoRequest)(nil),               // 2: relayward.nodeplugin.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),              // 3: relayward.nodeplugin.v1.GetInfoResponse
+	(*ConfigurationRequest)(nil),         // 4: relayward.nodeplugin.v1.ConfigurationRequest
+	(*ConfigurationValidated)(nil),       // 5: relayward.nodeplugin.v1.ConfigurationValidated
+	(*ConfigurationApplied)(nil),         // 6: relayward.nodeplugin.v1.ConfigurationApplied
+	(*GetStatusRequest)(nil),             // 7: relayward.nodeplugin.v1.GetStatusRequest
+	(*GetStatusResponse)(nil),            // 8: relayward.nodeplugin.v1.GetStatusResponse
+	(*CollectTelemetryRequest)(nil),      // 9: relayward.nodeplugin.v1.CollectTelemetryRequest
+	(*TrafficCounter)(nil),               // 10: relayward.nodeplugin.v1.TrafficCounter
+	(*AccessEvent)(nil),                  // 11: relayward.nodeplugin.v1.AccessEvent
+	(*CollectTelemetryResponse)(nil),     // 12: relayward.nodeplugin.v1.CollectTelemetryResponse
+	(*SetServiceStateRequest)(nil),       // 13: relayward.nodeplugin.v1.SetServiceStateRequest
+	(*SetServiceStateResponse)(nil),      // 14: relayward.nodeplugin.v1.SetServiceStateResponse
+	(*DynamicBlock)(nil),                 // 15: relayward.nodeplugin.v1.DynamicBlock
+	(*ReplaceDynamicBlocksRequest)(nil),  // 16: relayward.nodeplugin.v1.ReplaceDynamicBlocksRequest
+	(*ReplaceDynamicBlocksResponse)(nil), // 17: relayward.nodeplugin.v1.ReplaceDynamicBlocksResponse
 }
 var file_nodeplugin_v1_node_plugin_proto_depIdxs = []int32{
-	0, // 0: relayward.nodeplugin.v1.GetStatusResponse.health:type_name -> relayward.nodeplugin.v1.Health
-	1, // 1: relayward.nodeplugin.v1.NodePlugin.GetInfo:input_type -> relayward.nodeplugin.v1.GetInfoRequest
-	3, // 2: relayward.nodeplugin.v1.NodePlugin.ValidateConfiguration:input_type -> relayward.nodeplugin.v1.ConfigurationRequest
-	3, // 3: relayward.nodeplugin.v1.NodePlugin.ApplyConfiguration:input_type -> relayward.nodeplugin.v1.ConfigurationRequest
-	6, // 4: relayward.nodeplugin.v1.NodePlugin.GetStatus:input_type -> relayward.nodeplugin.v1.GetStatusRequest
-	2, // 5: relayward.nodeplugin.v1.NodePlugin.GetInfo:output_type -> relayward.nodeplugin.v1.GetInfoResponse
-	4, // 6: relayward.nodeplugin.v1.NodePlugin.ValidateConfiguration:output_type -> relayward.nodeplugin.v1.ConfigurationValidated
-	5, // 7: relayward.nodeplugin.v1.NodePlugin.ApplyConfiguration:output_type -> relayward.nodeplugin.v1.ConfigurationApplied
-	7, // 8: relayward.nodeplugin.v1.NodePlugin.GetStatus:output_type -> relayward.nodeplugin.v1.GetStatusResponse
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0,  // 0: relayward.nodeplugin.v1.GetStatusResponse.health:type_name -> relayward.nodeplugin.v1.Health
+	10, // 1: relayward.nodeplugin.v1.CollectTelemetryResponse.counters:type_name -> relayward.nodeplugin.v1.TrafficCounter
+	11, // 2: relayward.nodeplugin.v1.CollectTelemetryResponse.events:type_name -> relayward.nodeplugin.v1.AccessEvent
+	1,  // 3: relayward.nodeplugin.v1.SetServiceStateRequest.reason:type_name -> relayward.nodeplugin.v1.ServiceStateReason
+	1,  // 4: relayward.nodeplugin.v1.SetServiceStateResponse.reason:type_name -> relayward.nodeplugin.v1.ServiceStateReason
+	15, // 5: relayward.nodeplugin.v1.ReplaceDynamicBlocksRequest.blocks:type_name -> relayward.nodeplugin.v1.DynamicBlock
+	2,  // 6: relayward.nodeplugin.v1.NodePlugin.GetInfo:input_type -> relayward.nodeplugin.v1.GetInfoRequest
+	4,  // 7: relayward.nodeplugin.v1.NodePlugin.ValidateConfiguration:input_type -> relayward.nodeplugin.v1.ConfigurationRequest
+	4,  // 8: relayward.nodeplugin.v1.NodePlugin.ApplyConfiguration:input_type -> relayward.nodeplugin.v1.ConfigurationRequest
+	7,  // 9: relayward.nodeplugin.v1.NodePlugin.GetStatus:input_type -> relayward.nodeplugin.v1.GetStatusRequest
+	9,  // 10: relayward.nodeplugin.v1.NodePlugin.CollectTelemetry:input_type -> relayward.nodeplugin.v1.CollectTelemetryRequest
+	13, // 11: relayward.nodeplugin.v1.NodePlugin.SetServiceState:input_type -> relayward.nodeplugin.v1.SetServiceStateRequest
+	16, // 12: relayward.nodeplugin.v1.NodePlugin.ReplaceDynamicBlocks:input_type -> relayward.nodeplugin.v1.ReplaceDynamicBlocksRequest
+	3,  // 13: relayward.nodeplugin.v1.NodePlugin.GetInfo:output_type -> relayward.nodeplugin.v1.GetInfoResponse
+	5,  // 14: relayward.nodeplugin.v1.NodePlugin.ValidateConfiguration:output_type -> relayward.nodeplugin.v1.ConfigurationValidated
+	6,  // 15: relayward.nodeplugin.v1.NodePlugin.ApplyConfiguration:output_type -> relayward.nodeplugin.v1.ConfigurationApplied
+	8,  // 16: relayward.nodeplugin.v1.NodePlugin.GetStatus:output_type -> relayward.nodeplugin.v1.GetStatusResponse
+	12, // 17: relayward.nodeplugin.v1.NodePlugin.CollectTelemetry:output_type -> relayward.nodeplugin.v1.CollectTelemetryResponse
+	14, // 18: relayward.nodeplugin.v1.NodePlugin.SetServiceState:output_type -> relayward.nodeplugin.v1.SetServiceStateResponse
+	17, // 19: relayward.nodeplugin.v1.NodePlugin.ReplaceDynamicBlocks:output_type -> relayward.nodeplugin.v1.ReplaceDynamicBlocksResponse
+	13, // [13:20] is the sub-list for method output_type
+	6,  // [6:13] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_nodeplugin_v1_node_plugin_proto_init() }
@@ -535,8 +1374,8 @@ func file_nodeplugin_v1_node_plugin_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_nodeplugin_v1_node_plugin_proto_rawDesc), len(file_nodeplugin_v1_node_plugin_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   7,
+			NumEnums:      2,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

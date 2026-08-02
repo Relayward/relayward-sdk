@@ -2,19 +2,54 @@ package nodepluginv1
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
+	"time"
 
 	agentv1 "github.com/Relayward/relayward-sdk/agent/v1"
 	"github.com/Relayward/relayward-sdk/contract"
 )
 
 func TestValidateInfoResponse(t *testing.T) {
-	value := &GetInfoResponse{ApiVersion: contract.NodePluginAPIVersion, PluginId: "io.relayward.test", Version: "1.2.3"}
+	value := &GetInfoResponse{ApiVersion: contract.NodePluginAPIVersion, PluginId: "io.relayward.test", Version: "1.2.3", Capabilities: []string{CapabilityServiceControl, CapabilityTrafficCounters}}
 	if err := ValidateInfoResponse(value, value.PluginId, value.Version); err != nil {
 		t.Fatalf("ValidateInfoResponse() error = %v", err)
 	}
 	if err := ValidateInfoResponse(value, "io.relayward.other", value.Version); err == nil {
 		t.Fatal("ValidateInfoResponse() accepted a different plugin ID")
+	}
+}
+
+func TestValidateTelemetryAndEnforcement(t *testing.T) {
+	authorizationID := "123e4567-e89b-42d3-a456-426614174000"
+	request := &CollectTelemetryRequest{MaximumEvents: 2}
+	response := &CollectTelemetryResponse{
+		ObservedAtUnixNano: time.Now().UnixNano(), NextSequence: 1,
+		Counters: []*TrafficCounter{{AuthorizationId: authorizationID, ServiceId: "main", CounterEpoch: "boot-1", UploadBytes: 10}},
+		Events: []*AccessEvent{{Sequence: 1, EventId: "access-1", ObservedAtUnixNano: time.Now().UnixNano(),
+			AuthorizationId: authorizationID, ServiceId: "main", SourceIp: "192.0.2.1", Destination: "example.com",
+			DestinationPort: 443, Network: "tcp", Protocol: "tls", Action: agentv1.AccessActionAccepted}},
+	}
+	if err := ValidateCollectTelemetryResponse(request, response); err != nil {
+		t.Fatalf("ValidateCollectTelemetryResponse() error = %v", err)
+	}
+	response.Events[0].Sequence = 2
+	if err := ValidateCollectTelemetryResponse(request, response); err == nil || !strings.Contains(err.Error(), "contiguous") {
+		t.Fatalf("telemetry gap error = %v", err)
+	}
+
+	state := &SetServiceStateRequest{PolicyGeneration: 3, StateRevision: 1, AuthorizationId: authorizationID, ServiceId: "main", Enabled: false,
+		Reason: ServiceStateReason_SERVICE_STATE_REASON_QUOTA_EXCEEDED}
+	stateResponse := &SetServiceStateResponse{PolicyGeneration: state.PolicyGeneration, StateRevision: state.StateRevision, AuthorizationId: state.AuthorizationId,
+		ServiceId: state.ServiceId, Enabled: state.Enabled, Reason: state.Reason}
+	if err := ValidateSetServiceStateResponse(state, stateResponse); err != nil {
+		t.Fatalf("ValidateSetServiceStateResponse() error = %v", err)
+	}
+	blocks := &ReplaceDynamicBlocksRequest{PolicyGeneration: 3, BlockRevision: 1, Blocks: []*DynamicBlock{{
+		AuthorizationId: authorizationID, ServiceId: "main", SourceIp: "192.0.2.2", ExpiresAtUnixNano: time.Now().Add(time.Minute).UnixNano(),
+	}}}
+	if err := ValidateReplaceDynamicBlocksResponse(blocks, &ReplaceDynamicBlocksResponse{PolicyGeneration: 3, BlockRevision: 1, BlockCount: 1}); err != nil {
+		t.Fatalf("ValidateReplaceDynamicBlocksResponse() error = %v", err)
 	}
 }
 

@@ -50,6 +50,12 @@ jobs:
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
       - run: /tmp/relayward-conformance agent-event-batch fixtures/agent/event-batch.json
       - run: /tmp/relayward-conformance agent-event-ack fixtures/agent/event-batch-ack.json
+      - run: /tmp/relayward-conformance agent-plugin-reconcile fixtures/agent/plugin-reconcile-command.json
+      - run: /tmp/relayward-conformance agent-plugin-status fixtures/agent/plugin-status.json
+      - run: /tmp/relayward-conformance agent-policy-reconcile fixtures/agent/policy-reconcile-command.json
+      - run: /tmp/relayward-conformance agent-traffic-snapshot fixtures/agent/traffic-snapshot.json
+      - run: /tmp/relayward-conformance agent-access-event fixtures/agent/access-event.json
+      - run: /tmp/relayward-conformance node-plugin-info fixtures/node-plugin/info.json
       - run: /tmp/relayward-conformance center-plugin-info fixtures/center-plugin/info.json
       - run: /tmp/relayward-conformance center-plugin-activation fixtures/center-plugin/activation.json
       - run: /tmp/relayward-conformance center-plugin-status fixtures/center-plugin/status.json

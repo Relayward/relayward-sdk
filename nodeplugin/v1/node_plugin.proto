@@ -9,6 +9,9 @@ service NodePlugin {
   rpc ValidateConfiguration(ConfigurationRequest) returns (ConfigurationValidated);
   rpc ApplyConfiguration(ConfigurationRequest) returns (ConfigurationApplied);
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+  rpc CollectTelemetry(CollectTelemetryRequest) returns (CollectTelemetryResponse);
+  rpc SetServiceState(SetServiceStateRequest) returns (SetServiceStateResponse);
+  rpc ReplaceDynamicBlocks(ReplaceDynamicBlocksRequest) returns (ReplaceDynamicBlocksResponse);
 }
 
 message GetInfoRequest {}
@@ -17,6 +20,7 @@ message GetInfoResponse {
   string api_version = 1;
   string plugin_id = 2;
   string version = 3;
+  repeated string capabilities = 4;
 }
 
 message ConfigurationRequest {
@@ -49,4 +53,84 @@ message GetStatusResponse {
   string configuration_sha256 = 2;
   Health health = 3;
   string message = 4;
+}
+
+message CollectTelemetryRequest {
+  uint64 after_sequence = 1;
+  uint32 maximum_events = 2;
+}
+
+message TrafficCounter {
+  string authorization_id = 1;
+  string service_id = 2;
+  string counter_epoch = 3;
+  uint64 upload_bytes = 4;
+  uint64 download_bytes = 5;
+}
+
+message AccessEvent {
+  uint64 sequence = 1;
+  string event_id = 2;
+  int64 observed_at_unix_nano = 3;
+  string authorization_id = 4;
+  string service_id = 5;
+  string source_ip = 6;
+  string destination = 7;
+  uint32 destination_port = 8;
+  string network = 9;
+  string protocol = 10;
+  string action = 11;
+}
+
+message CollectTelemetryResponse {
+  int64 observed_at_unix_nano = 1;
+  repeated TrafficCounter counters = 2;
+  repeated AccessEvent events = 3;
+  uint64 next_sequence = 4;
+  bool has_more = 5;
+}
+
+enum ServiceStateReason {
+  SERVICE_STATE_REASON_UNSPECIFIED = 0;
+  SERVICE_STATE_REASON_ACTIVE = 1;
+  SERVICE_STATE_REASON_ADMINISTRATOR_DISABLED = 2;
+  SERVICE_STATE_REASON_EXPIRED = 3;
+  SERVICE_STATE_REASON_QUOTA_EXCEEDED = 4;
+}
+
+message SetServiceStateRequest {
+  uint64 policy_generation = 1;
+  uint64 state_revision = 2;
+  string authorization_id = 3;
+  string service_id = 4;
+  bool enabled = 5;
+  ServiceStateReason reason = 6;
+}
+
+message SetServiceStateResponse {
+  uint64 policy_generation = 1;
+  uint64 state_revision = 2;
+  string authorization_id = 3;
+  string service_id = 4;
+  bool enabled = 5;
+  ServiceStateReason reason = 6;
+}
+
+message DynamicBlock {
+  string authorization_id = 1;
+  string service_id = 2;
+  string source_ip = 3;
+  int64 expires_at_unix_nano = 4;
+}
+
+message ReplaceDynamicBlocksRequest {
+  uint64 policy_generation = 1;
+  uint64 block_revision = 2;
+  repeated DynamicBlock blocks = 3;
+}
+
+message ReplaceDynamicBlocksResponse {
+  uint64 policy_generation = 1;
+  uint64 block_revision = 2;
+  uint32 block_count = 3;
 }

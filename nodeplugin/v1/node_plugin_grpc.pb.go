@@ -23,6 +23,9 @@ const (
 	NodePlugin_ValidateConfiguration_FullMethodName = "/relayward.nodeplugin.v1.NodePlugin/ValidateConfiguration"
 	NodePlugin_ApplyConfiguration_FullMethodName    = "/relayward.nodeplugin.v1.NodePlugin/ApplyConfiguration"
 	NodePlugin_GetStatus_FullMethodName             = "/relayward.nodeplugin.v1.NodePlugin/GetStatus"
+	NodePlugin_CollectTelemetry_FullMethodName      = "/relayward.nodeplugin.v1.NodePlugin/CollectTelemetry"
+	NodePlugin_SetServiceState_FullMethodName       = "/relayward.nodeplugin.v1.NodePlugin/SetServiceState"
+	NodePlugin_ReplaceDynamicBlocks_FullMethodName  = "/relayward.nodeplugin.v1.NodePlugin/ReplaceDynamicBlocks"
 )
 
 // NodePluginClient is the client API for NodePlugin service.
@@ -33,6 +36,9 @@ type NodePluginClient interface {
 	ValidateConfiguration(ctx context.Context, in *ConfigurationRequest, opts ...grpc.CallOption) (*ConfigurationValidated, error)
 	ApplyConfiguration(ctx context.Context, in *ConfigurationRequest, opts ...grpc.CallOption) (*ConfigurationApplied, error)
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
+	CollectTelemetry(ctx context.Context, in *CollectTelemetryRequest, opts ...grpc.CallOption) (*CollectTelemetryResponse, error)
+	SetServiceState(ctx context.Context, in *SetServiceStateRequest, opts ...grpc.CallOption) (*SetServiceStateResponse, error)
+	ReplaceDynamicBlocks(ctx context.Context, in *ReplaceDynamicBlocksRequest, opts ...grpc.CallOption) (*ReplaceDynamicBlocksResponse, error)
 }
 
 type nodePluginClient struct {
@@ -83,6 +89,36 @@ func (c *nodePluginClient) GetStatus(ctx context.Context, in *GetStatusRequest, 
 	return out, nil
 }
 
+func (c *nodePluginClient) CollectTelemetry(ctx context.Context, in *CollectTelemetryRequest, opts ...grpc.CallOption) (*CollectTelemetryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CollectTelemetryResponse)
+	err := c.cc.Invoke(ctx, NodePlugin_CollectTelemetry_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodePluginClient) SetServiceState(ctx context.Context, in *SetServiceStateRequest, opts ...grpc.CallOption) (*SetServiceStateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetServiceStateResponse)
+	err := c.cc.Invoke(ctx, NodePlugin_SetServiceState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodePluginClient) ReplaceDynamicBlocks(ctx context.Context, in *ReplaceDynamicBlocksRequest, opts ...grpc.CallOption) (*ReplaceDynamicBlocksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReplaceDynamicBlocksResponse)
+	err := c.cc.Invoke(ctx, NodePlugin_ReplaceDynamicBlocks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NodePluginServer is the server API for NodePlugin service.
 // All implementations must embed UnimplementedNodePluginServer
 // for forward compatibility.
@@ -91,6 +127,9 @@ type NodePluginServer interface {
 	ValidateConfiguration(context.Context, *ConfigurationRequest) (*ConfigurationValidated, error)
 	ApplyConfiguration(context.Context, *ConfigurationRequest) (*ConfigurationApplied, error)
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
+	CollectTelemetry(context.Context, *CollectTelemetryRequest) (*CollectTelemetryResponse, error)
+	SetServiceState(context.Context, *SetServiceStateRequest) (*SetServiceStateResponse, error)
+	ReplaceDynamicBlocks(context.Context, *ReplaceDynamicBlocksRequest) (*ReplaceDynamicBlocksResponse, error)
 	mustEmbedUnimplementedNodePluginServer()
 }
 
@@ -112,6 +151,15 @@ func (UnimplementedNodePluginServer) ApplyConfiguration(context.Context, *Config
 }
 func (UnimplementedNodePluginServer) GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
+}
+func (UnimplementedNodePluginServer) CollectTelemetry(context.Context, *CollectTelemetryRequest) (*CollectTelemetryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectTelemetry not implemented")
+}
+func (UnimplementedNodePluginServer) SetServiceState(context.Context, *SetServiceStateRequest) (*SetServiceStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetServiceState not implemented")
+}
+func (UnimplementedNodePluginServer) ReplaceDynamicBlocks(context.Context, *ReplaceDynamicBlocksRequest) (*ReplaceDynamicBlocksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReplaceDynamicBlocks not implemented")
 }
 func (UnimplementedNodePluginServer) mustEmbedUnimplementedNodePluginServer() {}
 func (UnimplementedNodePluginServer) testEmbeddedByValue()                    {}
@@ -206,6 +254,60 @@ func _NodePlugin_GetStatus_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NodePlugin_CollectTelemetry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectTelemetryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodePluginServer).CollectTelemetry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NodePlugin_CollectTelemetry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodePluginServer).CollectTelemetry(ctx, req.(*CollectTelemetryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodePlugin_SetServiceState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetServiceStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodePluginServer).SetServiceState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NodePlugin_SetServiceState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodePluginServer).SetServiceState(ctx, req.(*SetServiceStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodePlugin_ReplaceDynamicBlocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplaceDynamicBlocksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodePluginServer).ReplaceDynamicBlocks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NodePlugin_ReplaceDynamicBlocks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodePluginServer).ReplaceDynamicBlocks(ctx, req.(*ReplaceDynamicBlocksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NodePlugin_ServiceDesc is the grpc.ServiceDesc for NodePlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +330,18 @@ var NodePlugin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStatus",
 			Handler:    _NodePlugin_GetStatus_Handler,
+		},
+		{
+			MethodName: "CollectTelemetry",
+			Handler:    _NodePlugin_CollectTelemetry_Handler,
+		},
+		{
+			MethodName: "SetServiceState",
+			Handler:    _NodePlugin_SetServiceState_Handler,
+		},
+		{
+			MethodName: "ReplaceDynamicBlocks",
+			Handler:    _NodePlugin_ReplaceDynamicBlocks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

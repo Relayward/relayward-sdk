@@ -40,6 +40,22 @@ func TestLoadAgentEventFixtures(t *testing.T) {
 	}
 }
 
+func TestLoadAgentPolicyAndTelemetryFixtures(t *testing.T) {
+	root := filepath.Join("..", "fixtures", "agent")
+	if _, err := LoadAgentPolicyReconcileCommand(filepath.Join(root, "policy-reconcile-command.json")); err != nil {
+		t.Fatalf("LoadAgentPolicyReconcileCommand() error = %v", err)
+	}
+	if _, err := LoadAgentTrafficSnapshot(filepath.Join(root, "traffic-snapshot.json")); err != nil {
+		t.Fatalf("LoadAgentTrafficSnapshot() error = %v", err)
+	}
+	if _, err := LoadAgentAccessEvent(filepath.Join(root, "access-event.json")); err != nil {
+		t.Fatalf("LoadAgentAccessEvent() error = %v", err)
+	}
+	if _, err := LoadNodePluginInfo(filepath.Join("..", "fixtures", "node-plugin", "info.json")); err != nil {
+		t.Fatalf("LoadNodePluginInfo() error = %v", err)
+	}
+}
+
 func TestLoadContractPluginManifest(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "manifest.json")
 	raw := []byte(`{

@@ -14,7 +14,9 @@ The Agent creates private parent directories, removes only its own stale socket,
 
 ## Identity And Readiness
 
-`GetInfo` reports the exact API version, immutable plugin ID, and semantic plugin version. The Agent rejects an artifact whose identity or version differs from the desired release. A process is ready only after `GetInfo` succeeds within the startup deadline.
+`GetInfo` reports the exact API version, immutable plugin ID, semantic plugin version, and sorted capability set. The Agent rejects an artifact whose identity or version differs from the desired release. A process is ready only after `GetInfo` succeeds within the startup deadline.
+
+Capabilities are explicit: `traffic.counters`, `activity.recent`, `service.control`, and `blocking.dynamic`. Quota enforcement requires traffic counters and service control. A policy with a soft IP limit additionally requires recent activity and dynamic blocking on every bound runtime plugin.
 
 ## Configuration
 
@@ -27,6 +29,18 @@ The Agent calls `ValidateConfiguration` before `ApplyConfiguration`. Both respon
 `GetStatus` reports the applied generation, configuration digest, health, and a bounded diagnostic message. `HEALTH_HEALTHY` is valid only after a configuration has been applied. Messages must not contain private configuration or credentials and are not used for program flow.
 
 The Agent waits for the applied generation to become healthy before acknowledging a reconcile command. Failed upgrades or configuration changes restore the last successfully persisted version and configuration. Process crashes after activation are restarted with bounded backoff; terminal state changes are emitted as durable `plugin.status` events.
+
+## Telemetry
+
+`CollectTelemetry` is a bounded polling RPC. Each response contains one sorted set of current monotonic counters and a contiguous page of access events after the requested cursor. Counters are keyed by authorization and service. `counter_epoch` identifies a counter lifetime; a new epoch or a lower value in the same epoch is treated as a runtime counter reset, while an identical sample contributes no traffic.
+
+Plugin event sequence numbers are positive, contiguous, and persistent across plugin restarts. The plugin retains an event until the Agent advances past its sequence. If the requested cursor is older than retained data, the plugin returns a data-loss error rather than skipping records. Access events use stable source event IDs so the center can deduplicate an Agent retry. Source IPs are canonical strings and events never contain credentials or complete client configuration.
+
+## Local Enforcement
+
+`SetServiceState` atomically enables or disables one authorization and service for a policy generation and monotonic local state revision. The response echoes the complete applied state, and reapplying the same request is idempotent. The revision orders quota, expiry, and later period-reset transitions even when the center policy generation has not changed. Disabling includes one of the administrator-disabled, expired, or quota-exceeded reasons. Enabling always uses active.
+
+`ReplaceDynamicBlocks` atomically replaces the complete unexpired block set owned by Relayward for one plugin. A block is scoped to authorization, service, and source IP. Policy generation and a monotonic block revision make retries idempotent. Plugins must not retain omitted rules. The Agent reapplies the full set after either process restarts.
 
 ## Reconciliation
 

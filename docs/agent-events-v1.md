@@ -18,4 +18,11 @@ The Agent removes events only after durably applying a matching acknowledgement.
 
 ## Event Semantics
 
-Event transport is core-neutral. Kinds are namespaced identifiers and payloads are bounded JSON. Standard traffic, activity, access, runtime, and system event payloads are versioned when their corresponding vertical features are implemented; this transport contract does not define proxy-core-specific fields.
+Event transport is core-neutral. Kinds are namespaced identifiers and payloads are bounded JSON. The first standard payloads are:
+
+- `traffic.snapshot`: the Agent's absolute upload and download ledger for one authorization and deterministic period, with a monotonic revision. The center replaces an older revision rather than summing deliveries.
+- `access.observed`: a normalized runtime access decision with a plugin-stable source event ID, authorization and service identity, and only the applicable source, destination, port, network, protocol, and action fields.
+- `policy.status`: the locally enforced authorization state, absolute period totals, active and blocked IP counts, and enforcement reason.
+- `plugin.status`: node-plugin lifecycle state and the capabilities reported by a healthy running process.
+
+The center first persists and acknowledges the transport event. Independent consumers normalize traffic and access payloads using their own durable cursors; consumer failure does not delay Agent acknowledgement. Access payloads never contain proxy credentials, subscription tokens, UUID credentials, or complete client configuration.

@@ -1,0 +1,26 @@
+{
+  "kind": "policy.reconcile",
+  "issued_at": "2026-08-02T12:00:00Z",
+  "expires_at": "2026-08-02T13:00:00Z",
+  "payload": {
+    "generation": 2,
+    "authorizations": [
+      {
+        "authorization_id": "123e4567-e89b-42d3-a456-426614174000",
+        "started_at": "2026-08-01T00:00:00Z",
+        "enabled": true,
+        "traffic_limit_bytes": 1073741824,
+        "reset": {"kind": "daily", "timezone": "UTC"},
+        "current_period": {
+          "id": "a7ef0c94ed04d423c5683595d2fe78ba",
+          "starts_at": "2026-08-02T00:00:00Z",
+          "ends_at": "2026-08-03T00:00:00Z"
+        },
+        "soft_ip_limit": 3,
+        "activity_window_seconds": 600,
+        "block_duration_seconds": 1800,
+        "bindings": [{"plugin_id": "io.relayward.contract-test", "service_id": "main"}]
+      }
+    ]
+  }
+}

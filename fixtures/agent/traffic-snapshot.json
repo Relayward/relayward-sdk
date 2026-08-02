@@ -1,0 +1,11 @@
+{
+  "authorization_id": "123e4567-e89b-42d3-a456-426614174000",
+  "period": {
+    "id": "a7ef0c94ed04d423c5683595d2fe78ba",
+    "starts_at": "2026-08-02T00:00:00Z",
+    "ends_at": "2026-08-03T00:00:00Z"
+  },
+  "revision": 4,
+  "upload_bytes": 1024,
+  "download_bytes": 2048
+}

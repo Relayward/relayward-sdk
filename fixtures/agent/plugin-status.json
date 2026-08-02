@@ -5,5 +5,6 @@
   "version": "0.1.0",
   "configuration_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "health": "healthy",
-  "restart_count": 0
+  "restart_count": 0,
+  "capabilities": ["activity.recent", "blocking.dynamic", "service.control", "traffic.counters"]
 }

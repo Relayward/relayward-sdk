@@ -13,6 +13,7 @@ import (
 	agentv1 "github.com/Relayward/relayward-sdk/agent/v1"
 	centerpluginv1 "github.com/Relayward/relayward-sdk/centerplugin/v1"
 	"github.com/Relayward/relayward-sdk/manifest"
+	nodepluginv1 "github.com/Relayward/relayward-sdk/nodeplugin/v1"
 	"github.com/Relayward/relayward-sdk/protocol"
 )
 
@@ -84,6 +85,65 @@ func LoadAgentPluginStatus(path string) (agentv1.PluginStatusEvent, error) {
 	}
 	if err := agentv1.ValidatePluginStatusEvent(value); err != nil {
 		return agentv1.PluginStatusEvent{}, err
+	}
+	return value, nil
+}
+
+func LoadAgentPolicyReconcileCommand(path string) (agentv1.Command, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.Command{}, fmt.Errorf("open policy reconcile command: %w", err)
+	}
+	defer file.Close()
+	var value agentv1.Command
+	if err := decodeContractJSON(file, &value); err != nil {
+		return agentv1.Command{}, fmt.Errorf("decode policy reconcile command: %w", err)
+	}
+	if _, err := agentv1.DecodePolicyReconcileCommand(value); err != nil {
+		return agentv1.Command{}, err
+	}
+	return value, nil
+}
+
+func LoadAgentTrafficSnapshot(path string) (agentv1.TrafficSnapshotEvent, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.TrafficSnapshotEvent{}, fmt.Errorf("open traffic snapshot: %w", err)
+	}
+	defer file.Close()
+	var value agentv1.TrafficSnapshotEvent
+	if err := decodeContractJSON(file, &value); err != nil {
+		return agentv1.TrafficSnapshotEvent{}, fmt.Errorf("decode traffic snapshot: %w", err)
+	}
+	if err := agentv1.ValidateTrafficSnapshotEvent(value); err != nil {
+		return agentv1.TrafficSnapshotEvent{}, err
+	}
+	return value, nil
+}
+
+func LoadAgentAccessEvent(path string) (agentv1.AccessEvent, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.AccessEvent{}, fmt.Errorf("open access event: %w", err)
+	}
+	defer file.Close()
+	var value agentv1.AccessEvent
+	if err := decodeContractJSON(file, &value); err != nil {
+		return agentv1.AccessEvent{}, fmt.Errorf("decode access event: %w", err)
+	}
+	if err := agentv1.ValidateAccessEvent(value); err != nil {
+		return agentv1.AccessEvent{}, err
+	}
+	return value, nil
+}
+
+func LoadNodePluginInfo(path string) (*nodepluginv1.GetInfoResponse, error) {
+	value := &nodepluginv1.GetInfoResponse{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load node plugin info: %w", err)
+	}
+	if err := nodepluginv1.ValidateInfoResponse(value, "", ""); err != nil {
+		return nil, err
 	}
 	return value, nil
 }
