@@ -1,0 +1,39 @@
+{
+  "api_version": "relayward.plugin/v1",
+  "id": "io.relayward.contract-test",
+  "name": "Relayward contract test plugin",
+  "version": "0.1.0",
+  "kind": "runtime",
+  "requires": {
+    "control_api": 1,
+    "agent_api": 1,
+    "ui_api": 1
+  },
+  "permissions": [
+    {
+      "name": "core.nodes.read",
+      "reason": "Exercise permission declaration validation."
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "center",
+      "file": "contract-plugin-center-linux-amd64",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "os": "linux",
+      "arch": "amd64"
+    },
+    {
+      "role": "node",
+      "file": "contract-plugin-node-linux-amd64",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "os": "linux",
+      "arch": "amd64"
+    },
+    {
+      "role": "ui",
+      "file": "contract-plugin-ui.tar.gz",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ]
+}

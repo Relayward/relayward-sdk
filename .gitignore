@@ -1,0 +1,8 @@
+/dist/
+/tmp/
+*.test
+*.out
+ui/node_modules/
+ui/dist/
+ui/coverage/
+*.tgz
