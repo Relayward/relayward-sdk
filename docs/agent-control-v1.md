@@ -40,6 +40,8 @@ An `agent.update` command carries one semantic version without a leading `v`. Th
 
 A `plugin.reconcile` command carries the complete desired state for one node plugin. The Agent requires the `plugin.supervision` capability, persists the desired generation before execution, verifies the bounded GitHub artifact, and applies configuration through the local Node Plugin API. Successful output is accepted only when plugin identity, generation, state, version, and configuration digest match the request. The detailed process and rollback contract is defined in `node-plugin-v1.md`.
 
+A `policy.reconcile` command carries the complete authorization snapshot for one node. The `policy.enforcement` capability means the Agent persists that snapshot, aggregates runtime-plugin traffic, evaluates quota, period and expiry while disconnected, and applies service and soft-IP decisions through capable node plugins.
+
 The old process does not complete the command when it requests its supervised restart. The candidate must establish an authenticated control session and receive a heartbeat acknowledgement before the pending update is atomically confirmed. It then completes the original durable command with an `activated` output. A candidate that exits before confirmation is rolled back by the stable launcher; the restored version completes the same command as failed. Re-delivery uses the durable pending, confirmed, or failed update state instead of downloading or switching twice.
 
 ## Security And Limits

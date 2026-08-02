@@ -24,6 +24,7 @@ const (
 	CapabilityEventQueue        = "event.queue"
 	CapabilityAgentSelfUpdate   = "agent.self_update"
 	CapabilityPluginSupervision = "plugin.supervision"
+	CapabilityPolicyEnforcement = "policy.enforcement"
 
 	DefaultHeartbeatInterval = 30 * time.Second
 	MinimumHeartbeatInterval = 5 * time.Second
