@@ -30,7 +30,7 @@ Each role appears at most once:
 - `node`: optional Linux AMD64 static executable for runtime plugins.
 - `ui`: optional browser asset archive without an OS or architecture.
 
-`file` is a single GitHub Release asset name, never a path or URL. `sha256` contains 64 lowercase hexadecimal characters. Relayward resolves the named asset from the installed GitHub repository and verifies its digest before activation.
+`file` is a single GitHub Release asset name, never a path or URL. `size` is the exact release asset size in bytes; executable assets are limited to 256 MiB and UI archives to 64 MiB. `sha256` contains 64 lowercase hexadecimal characters. Relayward resolves the named asset from the installed GitHub repository and verifies both its exact size and digest before activation.
 
 The fixture in `fixtures/contract-plugin/manifest.json` demonstrates the complete shape. Its checksums are deliberately fake and the fixture is not an installable release.
 

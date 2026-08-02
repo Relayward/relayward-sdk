@@ -1,0 +1,9 @@
+{
+  "plugin_id": "io.relayward.contract-test",
+  "generation": 1,
+  "state": "running",
+  "version": "0.1.0",
+  "configuration_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "health": "healthy",
+  "restart_count": 0
+}

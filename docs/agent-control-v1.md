@@ -38,6 +38,8 @@ Commands are delivered in creation order, one active command per node. Expired c
 
 An `agent.update` command carries one semantic version without a leading `v`. The Agent resolves that version only from the fixed official Relayward Agent GitHub repository, verifies the bounded release manifest, exact artifact size and SHA-256, installed launcher compatibility, and the candidate's reported build version before switching an immutable version link.
 
+A `plugin.reconcile` command carries the complete desired state for one node plugin. The Agent requires the `plugin.supervision` capability, persists the desired generation before execution, verifies the bounded GitHub artifact, and applies configuration through the local Node Plugin API. Successful output is accepted only when plugin identity, generation, state, version, and configuration digest match the request. The detailed process and rollback contract is defined in `node-plugin-v1.md`.
+
 The old process does not complete the command when it requests its supervised restart. The candidate must establish an authenticated control session and receive a heartbeat acknowledgement before the pending update is atomically confirmed. It then completes the original durable command with an `activated` output. A candidate that exits before confirmation is rolled back by the stable launcher; the restored version completes the same command as failed. Re-delivery uses the durable pending, confirmed, or failed update state instead of downloading or switching twice.
 
 ## Security And Limits

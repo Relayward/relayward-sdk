@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package relayward.nodeplugin.v1;
+
+option go_package = "github.com/Relayward/relayward-sdk/nodeplugin/v1;nodepluginv1";
+
+service NodePlugin {
+  rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
+  rpc ValidateConfiguration(ConfigurationRequest) returns (ConfigurationValidated);
+  rpc ApplyConfiguration(ConfigurationRequest) returns (ConfigurationApplied);
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+}
+
+message GetInfoRequest {}
+
+message GetInfoResponse {
+  string api_version = 1;
+  string plugin_id = 2;
+  string version = 3;
+}
+
+message ConfigurationRequest {
+  uint64 generation = 1;
+  string sha256 = 2;
+  bytes json = 3;
+}
+
+message ConfigurationValidated {
+  uint64 generation = 1;
+  string sha256 = 2;
+}
+
+message ConfigurationApplied {
+  uint64 generation = 1;
+  string sha256 = 2;
+}
+
+message GetStatusRequest {}
+
+enum Health {
+  HEALTH_UNSPECIFIED = 0;
+  HEALTH_STARTING = 1;
+  HEALTH_HEALTHY = 2;
+  HEALTH_UNHEALTHY = 3;
+}
+
+message GetStatusResponse {
+  uint64 generation = 1;
+  string configuration_sha256 = 2;
+  Health health = 3;
+  string message = 4;
+}

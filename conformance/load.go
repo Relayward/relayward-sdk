@@ -52,6 +52,38 @@ func LoadAgentEventBatchAck(path string) (agentv1.EventBatchAck, error) {
 	return agentv1.DecodeEventBatchAck(file)
 }
 
+func LoadAgentPluginReconcileCommand(path string) (agentv1.Command, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.Command{}, fmt.Errorf("open plugin reconcile command: %w", err)
+	}
+	defer file.Close()
+	var value agentv1.Command
+	if err := decodeContractJSON(file, &value); err != nil {
+		return agentv1.Command{}, fmt.Errorf("decode plugin reconcile command: %w", err)
+	}
+	if _, err := agentv1.DecodePluginReconcileCommand(value); err != nil {
+		return agentv1.Command{}, err
+	}
+	return value, nil
+}
+
+func LoadAgentPluginStatus(path string) (agentv1.PluginStatusEvent, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.PluginStatusEvent{}, fmt.Errorf("open plugin status event: %w", err)
+	}
+	defer file.Close()
+	var value agentv1.PluginStatusEvent
+	if err := decodeContractJSON(file, &value); err != nil {
+		return agentv1.PluginStatusEvent{}, fmt.Errorf("decode plugin status event: %w", err)
+	}
+	if err := agentv1.ValidatePluginStatusEvent(value); err != nil {
+		return agentv1.PluginStatusEvent{}, err
+	}
+	return value, nil
+}
+
 func LoadEnvelope(path string) (protocol.Envelope, error) {
 	file, err := openContractFile(path)
 	if err != nil {
@@ -59,23 +91,30 @@ func LoadEnvelope(path string) (protocol.Envelope, error) {
 	}
 	defer file.Close()
 
-	decoder := json.NewDecoder(file)
-	decoder.DisallowUnknownFields()
 	var value protocol.Envelope
-	if err := decoder.Decode(&value); err != nil {
-		return protocol.Envelope{}, fmt.Errorf("decode envelope: %w", err)
-	}
-	var trailing any
-	if err := decoder.Decode(&trailing); err != io.EOF {
-		if err == nil {
-			return protocol.Envelope{}, fmt.Errorf("decode envelope: trailing JSON value")
-		}
+	if err := decodeContractJSON(file, &value); err != nil {
 		return protocol.Envelope{}, fmt.Errorf("decode envelope: %w", err)
 	}
 	if err := protocol.ValidateEnvelope(value); err != nil {
 		return protocol.Envelope{}, err
 	}
 	return value, nil
+}
+
+func decodeContractJSON(reader io.Reader, destination any) error {
+	decoder := json.NewDecoder(reader)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(destination); err != nil {
+		return err
+	}
+	var trailing any
+	if err := decoder.Decode(&trailing); err != io.EOF {
+		if err == nil {
+			return fmt.Errorf("trailing JSON value")
+		}
+		return err
+	}
+	return nil
 }
 
 func LoadAgentEnvelope(path string) (protocol.Envelope, error) {

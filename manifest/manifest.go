@@ -40,6 +40,7 @@ type Permission struct {
 type Artifact struct {
 	Role   ArtifactRole `json:"role"`
 	File   string       `json:"file"`
+	Size   int64        `json:"size"`
 	SHA256 string       `json:"sha256"`
 	OS     string       `json:"os,omitempty"`
 	Arch   string       `json:"arch,omitempty"`
@@ -57,9 +58,13 @@ type Manifest struct {
 }
 
 var (
-	idPattern         = regexp.MustCompile(`^[a-z0-9]+(?:[.-][a-z0-9]+)*$`)
 	permissionPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9_-]*)+$`)
 	sha256Pattern     = regexp.MustCompile(`^[0-9a-f]{64}$`)
+)
+
+const (
+	MaximumExecutableArtifactBytes int64 = 256 << 20
+	MaximumUIArtifactBytes         int64 = 64 << 20
 )
 
 func Decode(reader io.Reader) (Manifest, error) {
@@ -94,8 +99,8 @@ func Validate(value Manifest) error {
 	if value.APIVersion != contract.ManifestAPIVersion {
 		return fmt.Errorf("api_version: unsupported value %q", value.APIVersion)
 	}
-	if !idPattern.MatchString(value.ID) || len(value.ID) > 128 {
-		return fmt.Errorf("id: must be a lowercase dotted identifier of at most 128 characters")
+	if err := contract.ValidatePluginID(value.ID); err != nil {
+		return fmt.Errorf("id: %w", err)
 	}
 	if name := strings.TrimSpace(value.Name); name == "" || len(name) > 80 {
 		return fmt.Errorf("name: must contain 1 to 80 characters")
@@ -150,10 +155,16 @@ func validateArtifacts(value Manifest) error {
 		}
 		switch artifact.Role {
 		case ArtifactCenter, ArtifactNode:
+			if artifact.Size < 1 || artifact.Size > MaximumExecutableArtifactBytes {
+				return fmt.Errorf("artifacts[%d].size: must be between 1 and %d", index, MaximumExecutableArtifactBytes)
+			}
 			if artifact.OS != "linux" || artifact.Arch != "amd64" {
 				return fmt.Errorf("artifacts[%d]: executable target must be linux/amd64", index)
 			}
 		case ArtifactUI:
+			if artifact.Size < 1 || artifact.Size > MaximumUIArtifactBytes {
+				return fmt.Errorf("artifacts[%d].size: must be between 1 and %d", index, MaximumUIArtifactBytes)
+			}
 			if artifact.OS != "" || artifact.Arch != "" {
 				return fmt.Errorf("artifacts[%d]: UI artifact must not declare os or arch", index)
 			}

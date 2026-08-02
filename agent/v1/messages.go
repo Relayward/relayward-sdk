@@ -19,10 +19,11 @@ const (
 	MessageCenterCommandResultAck = "center.command_result_ack"
 	MessageProtocolError          = "protocol.error"
 
-	CapabilityControlHeartbeat = "control.heartbeat"
-	CapabilityControlCommands  = "control.commands"
-	CapabilityEventQueue       = "event.queue"
-	CapabilityAgentSelfUpdate  = "agent.self_update"
+	CapabilityControlHeartbeat  = "control.heartbeat"
+	CapabilityControlCommands   = "control.commands"
+	CapabilityEventQueue        = "event.queue"
+	CapabilityAgentSelfUpdate   = "agent.self_update"
+	CapabilityPluginSupervision = "plugin.supervision"
 
 	DefaultHeartbeatInterval = 30 * time.Second
 	MinimumHeartbeatInterval = 5 * time.Second

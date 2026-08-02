@@ -2,7 +2,7 @@
 
 Relayward applications and contract APIs use separate versions.
 
-Application and plugin releases use semantic versions without a leading `v` inside manifests. Git tags add the conventional `v` prefix. Contract APIs use stable identifiers such as `relayward.plugin/v1` and explicit positive integer majors in compatibility declarations.
+Application and plugin releases use semantic versions without a leading `v` inside manifests. Git tags add the conventional `v` prefix. Contract APIs use stable identifiers such as `relayward.plugin/v1` and `relayward.node-plugin/v1`, with explicit positive integer majors in compatibility declarations.
 
 ## Compatibility
 

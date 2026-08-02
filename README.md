@@ -5,6 +5,7 @@ Relayward SDK owns the versioned contracts shared by the Relayward control plane
 The initial contract foundation provides:
 
 - a strict, versioned plugin release manifest;
+- the node-plugin Unix-socket gRPC lifecycle and configuration API;
 - explicit permission declarations and host API compatibility checks;
 - a generic control-message envelope and standard problem codes;
 - the Linux AMD64 Agent registration and heartbeat control contract;

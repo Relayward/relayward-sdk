@@ -16,9 +16,9 @@ const validManifest = `{
   "requires": {"control_api": 1, "agent_api": 1, "ui_api": 1},
   "permissions": [{"name": "core.nodes.read", "reason": "Exercise permission validation."}],
   "artifacts": [
-    {"role": "center", "file": "contract-plugin-center-linux-amd64", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "os": "linux", "arch": "amd64"},
-    {"role": "node", "file": "contract-plugin-node-linux-amd64", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "os": "linux", "arch": "amd64"},
-    {"role": "ui", "file": "contract-plugin-ui.tar.gz", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}
+    {"role": "center", "file": "contract-plugin-center-linux-amd64", "size": 1000, "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "os": "linux", "arch": "amd64"},
+    {"role": "node", "file": "contract-plugin-node-linux-amd64", "size": 2000, "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "os": "linux", "arch": "amd64"},
+    {"role": "ui", "file": "contract-plugin-ui.tar.gz", "size": 3000, "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}
   ]
 }`
 
@@ -85,5 +85,16 @@ func TestValidateRejectsInvalidSemanticVersion(t *testing.T) {
 	value.Version = "1.0.0-01"
 	if err := Validate(value); err == nil || !strings.Contains(err.Error(), "semantic version") {
 		t.Fatalf("Validate() error = %v, want semantic version error", err)
+	}
+}
+
+func TestValidateRejectsInvalidArtifactSize(t *testing.T) {
+	value, err := Decode(strings.NewReader(validManifest))
+	if err != nil {
+		t.Fatalf("Decode() error = %v", err)
+	}
+	value.Artifacts[0].Size = MaximumExecutableArtifactBytes + 1
+	if err := Validate(value); err == nil || !strings.Contains(err.Error(), "size") {
+		t.Fatalf("Validate() error = %v, want size error", err)
 	}
 }

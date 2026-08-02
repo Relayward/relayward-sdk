@@ -8,16 +8,27 @@ import (
 )
 
 const (
-	ManifestAPIVersion = "relayward.plugin/v1"
-	ControlAPIVersion  = "relayward.control/v1"
-	AgentAPIVersion    = "relayward.agent/v1"
+	ManifestAPIVersion   = "relayward.plugin/v1"
+	ControlAPIVersion    = "relayward.control/v1"
+	AgentAPIVersion      = "relayward.agent/v1"
+	NodePluginAPIVersion = "relayward.node-plugin/v1"
 
 	ControlAPIMajor uint32 = 1
 	AgentAPIMajor   uint32 = 1
 	UIAPIMajor      uint32 = 1
 )
 
-var semanticVersionPattern = regexp.MustCompile(`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
+var (
+	pluginIDPattern        = regexp.MustCompile(`^[a-z0-9]+(?:[.-][a-z0-9]+)*$`)
+	semanticVersionPattern = regexp.MustCompile(`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
+)
+
+func ValidatePluginID(value string) error {
+	if len(value) > 128 || !pluginIDPattern.MatchString(value) {
+		return fmt.Errorf("must be a lowercase dotted identifier of at most 128 characters")
+	}
+	return nil
+}
 
 func ValidateSemanticVersion(value string) error {
 	if len(value) > 128 || !semanticVersionPattern.MatchString(value) {
