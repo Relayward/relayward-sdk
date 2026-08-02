@@ -5,7 +5,8 @@
       "id": "vless-main",
       "displayName": "VLESS main",
       "enabled": true,
-      "capabilities": ["subscription.render"]
+      "capabilities": ["subscription.render"],
+      "subscriptionSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     }
   ]
 }

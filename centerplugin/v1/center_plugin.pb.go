@@ -642,13 +642,14 @@ func (x *ReplaceServicesRequest) GetServices() []*PluginService {
 }
 
 type PluginService struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Enabled       bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Capabilities  []string               `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	DisplayName        string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Enabled            bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Capabilities       []string               `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
+	SubscriptionSha256 string                 `protobuf:"bytes,5,opt,name=subscription_sha256,json=subscriptionSha256,proto3" json:"subscription_sha256,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *PluginService) Reset() {
@@ -707,6 +708,13 @@ func (x *PluginService) GetCapabilities() []string {
 		return x.Capabilities
 	}
 	return nil
+}
+
+func (x *PluginService) GetSubscriptionSha256() string {
+	if x != nil {
+		return x.SubscriptionSha256
+	}
+	return ""
 }
 
 type ServicesReplaced struct {
@@ -1027,12 +1035,13 @@ const file_centerplugin_v1_center_plugin_proto_rawDesc = "" +
 	"\x05nodes\x18\x01 \x03(\v2\x1f.relayward.centerplugin.v1.NodeR\x05nodes\"w\n" +
 	"\x16ReplaceServicesRequest\x12\x17\n" +
 	"\anode_id\x18\x01 \x01(\tR\x06nodeId\x12D\n" +
-	"\bservices\x18\x02 \x03(\v2(.relayward.centerplugin.v1.PluginServiceR\bservices\"\x80\x01\n" +
+	"\bservices\x18\x02 \x03(\v2(.relayward.centerplugin.v1.PluginServiceR\bservices\"\xb1\x01\n" +
 	"\rPluginService\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x18\n" +
 	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\"\n" +
-	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\"7\n" +
+	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\x12/\n" +
+	"\x13subscription_sha256\x18\x05 \x01(\tR\x12subscriptionSha256\"7\n" +
 	"\x10ServicesReplaced\x12#\n" +
 	"\rservice_count\x18\x01 \x01(\rR\fserviceCount\"\xd9\x01\n" +
 	"\x19RenderSubscriptionRequest\x12)\n" +

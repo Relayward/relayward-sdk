@@ -50,8 +50,11 @@ func TestValidateListNodesResponse(t *testing.T) {
 
 func TestValidateServiceCatalog(t *testing.T) {
 	request := &ReplaceServicesRequest{
-		NodeId:   "10000000-0000-4000-8000-000000000001",
-		Services: []*PluginService{{Id: "vless-main", DisplayName: "VLESS", Enabled: true, Capabilities: []string{"subscription.render"}}},
+		NodeId: "10000000-0000-4000-8000-000000000001",
+		Services: []*PluginService{{
+			Id: "vless-main", DisplayName: "VLESS", Enabled: true, Capabilities: []string{"subscription.render"},
+			SubscriptionSha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		}},
 	}
 	if err := ValidateServicesReplaced(request, &ServicesReplaced{ServiceCount: 1}); err != nil {
 		t.Fatalf("ValidateServicesReplaced() error = %v", err)

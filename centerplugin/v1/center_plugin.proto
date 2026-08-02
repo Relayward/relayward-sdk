@@ -79,6 +79,7 @@ message PluginService {
   string display_name = 2;
   bool enabled = 3;
   repeated string capabilities = 4;
+  string subscription_sha256 = 5;
 }
 
 message ServicesReplaced {

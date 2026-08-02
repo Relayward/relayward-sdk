@@ -36,6 +36,7 @@ var (
 	uiMethodPattern  = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$`)
 	serviceIDPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
 	uuidPattern      = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
+	sha256Pattern    = regexp.MustCompile(`^[0-9a-f]{64}$`)
 )
 
 func ValidateInfoResponse(value *GetInfoResponse, expectedPluginID, expectedVersion string) error {
@@ -173,6 +174,9 @@ func ValidateReplaceServicesRequest(value *ReplaceServicesRequest) error {
 		}
 		if err := validateCapabilities(fmt.Sprintf("services[%d].capabilities", index), service.Capabilities); err != nil {
 			return err
+		}
+		if !sha256Pattern.MatchString(service.SubscriptionSha256) {
+			return fmt.Errorf("services[%d].subscription_sha256: must be a lowercase SHA-256 digest", index)
 		}
 	}
 	return nil

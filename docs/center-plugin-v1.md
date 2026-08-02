@@ -13,7 +13,7 @@ The plugin must report its exact API version, plugin ID, and semantic release ve
 Host RPC authorization is bound to the plugin process, its expected plugin ID, and its approved manifest permissions. Version 1 defines:
 
 - `core.nodes.read`, which permits `ListNodes`. The response exposes node ID, display name, enabled state, and current connection state; it does not expose node credentials, addresses, Agent hostnames, or event data.
-- `core.services.write`, which permits `ReplaceServices`. A runtime plugin atomically replaces only its own service catalog for one node. The Host supplies the plugin identity from the supervised process, so a plugin cannot create services for another plugin. An empty list removes the plugin's catalog for that node. Service IDs and capabilities are sorted, unique, bounded values.
+- `core.services.write`, which permits `ReplaceServices`. A runtime plugin atomically replaces only its own service catalog for one node. The Host supplies the plugin identity from the supervised process, so a plugin cannot create services for another plugin. An empty list removes the plugin's catalog for that node. Service IDs and capabilities are sorted, unique, bounded values. Each service supplies a SHA-256 digest of all plugin-owned inputs that can change its subscription output; the digest reveals no configuration and changes whenever those inputs change.
 
 A missing permission is returned as gRPC `PermissionDenied`. Registering services for a node where the plugin has no node instance is rejected.
 
