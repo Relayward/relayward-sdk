@@ -1,6 +1,6 @@
 # Contract Test Plugin Fixture
 
-This non-production runtime plugin exercises center and node process lifecycle, permission-gated Host RPC, configuration rollback, health reporting, and the sandbox UI bridge.
+This non-production runtime plugin exercises center and node process lifecycle, permission-gated Host RPC, structured event publication, configuration rollback, health reporting, and the sandbox UI bridge.
 
 Build an installable GitHub Release-shaped directory with:
 

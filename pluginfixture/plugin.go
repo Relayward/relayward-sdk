@@ -154,6 +154,27 @@ func (plugin *centerPlugin) InvokeUI(ctx context.Context, request *centerpluginv
 		}
 		raw, _ := json.Marshal(map[string]uint32{"service_count": response.ServiceCount})
 		return &centerpluginv1.InvokeUIResponse{Json: raw}, nil
+	case "events.publish":
+		var input struct {
+			NodeID             string `json:"node_id"`
+			SourceEventID      string `json:"source_event_id"`
+			ObservedAtUnixNano int64  `json:"observed_at_unix_nano"`
+		}
+		if err := json.Unmarshal(request.Json, &input); err != nil {
+			return nil, status.Error(codes.InvalidArgument, "invalid event publication")
+		}
+		response, err := centerpluginv1.NewPluginHostClient(host).PublishEvents(ctx, &centerpluginv1.PublishEventsRequest{
+			Events: []*centerpluginv1.PublishedEvent{{
+				SourceEventId: input.SourceEventID, NodeId: input.NodeID,
+				Kind: centerpluginv1.EventNotificationRequest, ObservedAtUnixNano: input.ObservedAtUnixNano,
+				Json: []byte(`{"severity":"info","subject":"Contract event","body":"The contract plugin published a test event."}`),
+			}},
+		})
+		if err != nil {
+			return nil, err
+		}
+		raw, _ := json.Marshal(map[string]uint32{"event_count": response.EventCount})
+		return &centerpluginv1.InvokeUIResponse{Json: raw}, nil
 	default:
 		return nil, status.Error(codes.InvalidArgument, "unsupported UI method")
 	}

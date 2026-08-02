@@ -32,6 +32,7 @@ func main() {
 		Kind:     manifest.KindRuntime,
 		Requires: manifest.Requirements{ControlAPI: contract.ControlAPIMajor, AgentAPI: &agentAPI, UIAPI: &uiAPI},
 		Permissions: []manifest.Permission{
+			{Name: centerpluginv1.PermissionEventsWrite, Reason: "Exercise permission-gated structured event publication."},
 			{Name: centerpluginv1.PermissionNodesRead, Reason: "Exercise permission-gated node state access."},
 			{Name: centerpluginv1.PermissionServicesWrite, Reason: "Exercise permission-gated service catalog replacement."},
 		},
