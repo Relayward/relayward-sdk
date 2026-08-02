@@ -1,0 +1,6 @@
+{
+  "api_version": "relayward.agent/v1",
+  "stream_id": "0123456789abcdef0123456789abcdef",
+  "highest_contiguous_sequence": 1,
+  "server_time": "2026-08-02T09:00:01Z"
+}

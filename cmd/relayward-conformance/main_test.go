@@ -27,6 +27,8 @@ func TestRunAgentFixtures(t *testing.T) {
 	}{
 		{command: "agent-register", path: filepath.Join("..", "..", "fixtures", "agent", "register-request.json")},
 		{command: "agent-envelope", path: filepath.Join("..", "..", "fixtures", "agent", "hello.json")},
+		{command: "agent-event-batch", path: filepath.Join("..", "..", "fixtures", "agent", "event-batch.json")},
+		{command: "agent-event-ack", path: filepath.Join("..", "..", "fixtures", "agent", "event-batch-ack.json")},
 	}
 	for _, test := range tests {
 		t.Run(test.command, func(t *testing.T) {

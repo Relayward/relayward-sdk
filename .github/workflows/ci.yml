@@ -32,6 +32,8 @@ jobs:
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command.json
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result.json
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
+      - run: /tmp/relayward-conformance agent-event-batch fixtures/agent/event-batch.json
+      - run: /tmp/relayward-conformance agent-event-ack fixtures/agent/event-batch-ack.json
 
   ui:
     runs-on: ubuntu-latest

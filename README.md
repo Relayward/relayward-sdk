@@ -25,6 +25,8 @@ go run ./cmd/relayward-conformance agent-envelope fixtures/agent/hello.json
 go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command.json
 go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command-result.json
 go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
+go run ./cmd/relayward-conformance agent-event-batch fixtures/agent/event-batch.json
+go run ./cmd/relayward-conformance agent-event-ack fixtures/agent/event-batch-ack.json
 
 cd ui
 npm ci

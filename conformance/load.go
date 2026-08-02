@@ -34,6 +34,24 @@ func LoadAgentRegisterRequest(path string) (agentv1.RegisterRequest, error) {
 	return agentv1.DecodeRegisterRequest(file)
 }
 
+func LoadAgentEventBatch(path string) (agentv1.EventBatch, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.EventBatch{}, fmt.Errorf("open Agent event batch: %w", err)
+	}
+	defer file.Close()
+	return agentv1.DecodeEventBatch(file)
+}
+
+func LoadAgentEventBatchAck(path string) (agentv1.EventBatchAck, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.EventBatchAck{}, fmt.Errorf("open Agent event batch acknowledgement: %w", err)
+	}
+	defer file.Close()
+	return agentv1.DecodeEventBatchAck(file)
+}
+
 func LoadEnvelope(path string) (protocol.Envelope, error) {
 	file, err := openContractFile(path)
 	if err != nil {

@@ -29,6 +29,17 @@ func TestLoadAgentEnvelopeFixture(t *testing.T) {
 	}
 }
 
+func TestLoadAgentEventFixtures(t *testing.T) {
+	batch, err := LoadAgentEventBatch(filepath.Join("..", "fixtures", "agent", "event-batch.json"))
+	if err != nil || batch.LastSequence != 1 {
+		t.Fatalf("LoadAgentEventBatch() = %+v, %v", batch, err)
+	}
+	ack, err := LoadAgentEventBatchAck(filepath.Join("..", "fixtures", "agent", "event-batch-ack.json"))
+	if err != nil || ack.HighestContiguousSequence != 1 {
+		t.Fatalf("LoadAgentEventBatchAck() = %+v, %v", ack, err)
+	}
+}
+
 func TestLoadContractPluginManifest(t *testing.T) {
 	path := filepath.Join("..", "fixtures", "contract-plugin", "manifest.json")
 	value, err := LoadManifest(path)

@@ -21,6 +21,7 @@ const (
 
 	CapabilityControlHeartbeat = "control.heartbeat"
 	CapabilityControlCommands  = "control.commands"
+	CapabilityEventQueue       = "event.queue"
 
 	DefaultHeartbeatInterval = 30 * time.Second
 	MinimumHeartbeatInterval = 5 * time.Second

@@ -34,6 +34,10 @@ func run(args []string, stdout, stderr io.Writer) int {
 		_, err = conformance.LoadAgentRegisterRequest(args[1])
 	case "agent-envelope":
 		_, err = conformance.LoadAgentEnvelope(args[1])
+	case "agent-event-batch":
+		_, err = conformance.LoadAgentEventBatch(args[1])
+	case "agent-event-ack":
+		_, err = conformance.LoadAgentEventBatchAck(args[1])
 	default:
 		printUsage(stderr)
 		return 2
@@ -47,6 +51,6 @@ func run(args []string, stdout, stderr io.Writer) int {
 }
 
 func printUsage(writer io.Writer) {
-	fmt.Fprintln(writer, "usage: relayward-conformance <manifest|envelope|agent-register|agent-envelope> <path>")
+	fmt.Fprintln(writer, "usage: relayward-conformance <manifest|envelope|agent-register|agent-envelope|agent-event-batch|agent-event-ack> <path>")
 	fmt.Fprintln(writer, "       relayward-conformance version")
 }
