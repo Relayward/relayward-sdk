@@ -23,7 +23,8 @@ func TestStandardTelemetryValidation(t *testing.T) {
 		t.Fatalf("DecodeTrafficSnapshotEvent() = %+v, %v", decoded, err)
 	}
 	access := AccessEvent{
-		SourceEventID: "access-1", PluginID: "io.relayward.test", ServiceID: "main",
+		SourceStreamID: "0123456789abcdef0123456789abcdef",
+		SourceEventID:  "access-1", PluginID: "io.relayward.test", ServiceID: "main",
 		AuthorizationID: traffic.AuthorizationID, SourceIP: "2001:db8::1", Destination: "example.com",
 		DestinationPort: 443, Network: "tcp", Protocol: "tls", Action: AccessActionAccepted,
 	}

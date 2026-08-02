@@ -32,6 +32,7 @@ type TrafficSnapshotEvent struct {
 }
 
 type AccessEvent struct {
+	SourceStreamID  string `json:"source_stream_id"`
 	SourceEventID   string `json:"source_event_id"`
 	PluginID        string `json:"plugin_id"`
 	ServiceID       string `json:"service_id"`
@@ -69,6 +70,9 @@ func DecodeTrafficSnapshotEvent(raw json.RawMessage) (TrafficSnapshotEvent, erro
 }
 
 func ValidateAccessEvent(value AccessEvent) error {
+	if !messageIDPattern.MatchString(value.SourceStreamID) {
+		return fmt.Errorf("source_stream_id: invalid stream ID")
+	}
 	if !sourceEventIDPattern.MatchString(value.SourceEventID) {
 		return fmt.Errorf("source_event_id: invalid event ID")
 	}

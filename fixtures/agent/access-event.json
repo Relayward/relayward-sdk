@@ -1,4 +1,5 @@
 {
+  "source_stream_id": "0123456789abcdef0123456789abcdef",
   "source_event_id": "access-42",
   "plugin_id": "io.relayward.contract-test",
   "service_id": "main",

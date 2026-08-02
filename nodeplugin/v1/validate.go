@@ -335,7 +335,8 @@ func validateAccessEvent(value *AccessEvent) error {
 		return fmt.Errorf("sequence: must be between 1 and %d", int64(math.MaxInt64))
 	}
 	standard := agentv1.AccessEvent{
-		SourceEventID: value.EventId, ServiceID: value.ServiceId, AuthorizationID: value.AuthorizationId,
+		SourceStreamID: "00000000000000000000000000000000", SourceEventID: value.EventId,
+		ServiceID: value.ServiceId, AuthorizationID: value.AuthorizationId,
 		SourceIP: value.SourceIp, Destination: value.Destination, DestinationPort: value.DestinationPort,
 		Network: value.Network, Protocol: value.Protocol, Action: value.Action,
 		PluginID: "io.relayward.validation",
