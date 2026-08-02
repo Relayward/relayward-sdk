@@ -20,6 +20,28 @@ func TestRunManifest(t *testing.T) {
 	}
 }
 
+func TestRunAgentFixtures(t *testing.T) {
+	tests := []struct {
+		command string
+		path    string
+	}{
+		{command: "agent-register", path: filepath.Join("..", "..", "fixtures", "agent", "register-request.json")},
+		{command: "agent-envelope", path: filepath.Join("..", "..", "fixtures", "agent", "hello.json")},
+	}
+	for _, test := range tests {
+		t.Run(test.command, func(t *testing.T) {
+			var stdout bytes.Buffer
+			var stderr bytes.Buffer
+			if code := run([]string{test.command, test.path}, &stdout, &stderr); code != 0 {
+				t.Fatalf("run() = %d, stderr = %q", code, stderr.String())
+			}
+			if !strings.Contains(stdout.String(), test.command+" valid") {
+				t.Fatalf("stdout = %q", stdout.String())
+			}
+		})
+	}
+}
+
 func TestRunRejectsUnknownCommand(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer

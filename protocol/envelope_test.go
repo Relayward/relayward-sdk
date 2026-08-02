@@ -3,6 +3,8 @@ package protocol
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/Relayward/relayward-sdk/contract"
 )
 
 func TestNewEnvelope(t *testing.T) {
@@ -26,6 +28,19 @@ func TestValidateEnvelopeRejectsInvalidIdempotencyKey(t *testing.T) {
 	value.IdempotencyKey = "contains spaces"
 	if err := ValidateEnvelope(value); err == nil {
 		t.Fatal("ValidateEnvelope() error = nil, want invalid key error")
+	}
+}
+
+func TestNewEnvelopeForAgentAPI(t *testing.T) {
+	value, err := NewEnvelopeFor(contract.AgentAPIVersion, "agent.hello", json.RawMessage(`{}`))
+	if err != nil {
+		t.Fatalf("NewEnvelopeFor() error = %v", err)
+	}
+	if err := ValidateEnvelopeVersion(value, contract.AgentAPIVersion); err != nil {
+		t.Fatalf("ValidateEnvelopeVersion() error = %v", err)
+	}
+	if err := ValidateEnvelopeVersion(value, contract.ControlAPIVersion); err == nil {
+		t.Fatal("ValidateEnvelopeVersion() accepted the wrong API version")
 	}
 }
 

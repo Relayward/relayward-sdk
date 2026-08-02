@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 
+	agentv1 "github.com/Relayward/relayward-sdk/agent/v1"
 	"github.com/Relayward/relayward-sdk/manifest"
 	"github.com/Relayward/relayward-sdk/protocol"
 )
@@ -21,6 +22,16 @@ func LoadManifest(path string) (manifest.Manifest, error) {
 	defer file.Close()
 
 	return manifest.Decode(file)
+}
+
+func LoadAgentRegisterRequest(path string) (agentv1.RegisterRequest, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return agentv1.RegisterRequest{}, fmt.Errorf("open Agent registration request: %w", err)
+	}
+	defer file.Close()
+
+	return agentv1.DecodeRegisterRequest(file)
 }
 
 func LoadEnvelope(path string) (protocol.Envelope, error) {
@@ -44,6 +55,17 @@ func LoadEnvelope(path string) (protocol.Envelope, error) {
 		return protocol.Envelope{}, fmt.Errorf("decode envelope: %w", err)
 	}
 	if err := protocol.ValidateEnvelope(value); err != nil {
+		return protocol.Envelope{}, err
+	}
+	return value, nil
+}
+
+func LoadAgentEnvelope(path string) (protocol.Envelope, error) {
+	value, err := LoadEnvelope(path)
+	if err != nil {
+		return protocol.Envelope{}, err
+	}
+	if err := agentv1.ValidateEnvelope(value); err != nil {
 		return protocol.Envelope{}, err
 	}
 	return value, nil

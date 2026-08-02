@@ -7,6 +7,7 @@ The initial contract foundation provides:
 - a strict, versioned plugin release manifest;
 - explicit permission declarations and host API compatibility checks;
 - a generic control-message envelope and standard problem codes;
+- the Linux AMD64 Agent registration and heartbeat control contract;
 - Go validation helpers and a conformance command;
 - a TypeScript package for shared UI-facing protocol types;
 - fixtures used by producer and consumer CI.
@@ -19,6 +20,8 @@ Proxy protocols and unfinished business RPCs are intentionally absent. They are 
 go test ./...
 go vet ./...
 go run ./cmd/relayward-conformance manifest fixtures/contract-plugin/manifest.json
+go run ./cmd/relayward-conformance agent-register fixtures/agent/register-request.json
+go run ./cmd/relayward-conformance agent-envelope fixtures/agent/hello.json
 
 cd ui
 npm ci

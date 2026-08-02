@@ -1,0 +1,11 @@
+{
+  "api_version": "relayward.agent/v1",
+  "token": "rwr_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "agent_version": "0.1.0",
+  "hostname": "edge-one",
+  "os": "linux",
+  "arch": "amd64",
+  "capabilities": [
+    "control.heartbeat"
+  ]
+}

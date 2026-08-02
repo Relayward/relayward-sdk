@@ -29,6 +29,10 @@ var (
 )
 
 func NewEnvelope(messageType string, payload any) (Envelope, error) {
+	return NewEnvelopeFor(contract.ControlAPIVersion, messageType, payload)
+}
+
+func NewEnvelopeFor(apiVersion, messageType string, payload any) (Envelope, error) {
 	id, err := NewID()
 	if err != nil {
 		return Envelope{}, err
@@ -38,7 +42,7 @@ func NewEnvelope(messageType string, payload any) (Envelope, error) {
 		return Envelope{}, fmt.Errorf("encode payload: %w", err)
 	}
 	value := Envelope{
-		APIVersion: contract.ControlAPIVersion,
+		APIVersion: apiVersion,
 		ID:         id,
 		Type:       messageType,
 		SentAt:     time.Now().UTC(),
@@ -59,9 +63,20 @@ func NewID() (string, error) {
 }
 
 func ValidateEnvelope(value Envelope) error {
-	if value.APIVersion != contract.ControlAPIVersion {
+	if !contract.IsMessageAPIVersion(value.APIVersion) {
 		return fmt.Errorf("api_version: unsupported value %q", value.APIVersion)
 	}
+	return validateEnvelopeFields(value)
+}
+
+func ValidateEnvelopeVersion(value Envelope, apiVersion string) error {
+	if !contract.IsMessageAPIVersion(apiVersion) || value.APIVersion != apiVersion {
+		return fmt.Errorf("api_version: unsupported value %q", value.APIVersion)
+	}
+	return validateEnvelopeFields(value)
+}
+
+func validateEnvelopeFields(value Envelope) error {
 	if !idPattern.MatchString(value.ID) {
 		return fmt.Errorf("id: must contain 32 lowercase hexadecimal characters")
 	}

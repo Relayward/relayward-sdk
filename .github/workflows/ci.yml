@@ -27,6 +27,8 @@ jobs:
       - run: GOOS=linux GOARCH=amd64 go build -trimpath -o /tmp/relayward-conformance ./cmd/relayward-conformance
       - run: /tmp/relayward-conformance manifest fixtures/contract-plugin/manifest.json
       - run: /tmp/relayward-conformance envelope fixtures/envelopes/system-hello.json
+      - run: /tmp/relayward-conformance agent-register fixtures/agent/register-request.json
+      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/hello.json
 
   ui:
     runs-on: ubuntu-latest

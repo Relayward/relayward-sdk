@@ -1,0 +1,14 @@
+{
+  "api_version": "relayward.agent/v1",
+  "id": "0123456789abcdef0123456789abcdef",
+  "type": "agent.hello",
+  "sent_at": "2026-08-02T08:00:00Z",
+  "payload": {
+    "node_id": "123e4567-e89b-42d3-a456-426614174000",
+    "agent_version": "0.1.0",
+    "started_at": "2026-08-02T07:59:00Z",
+    "capabilities": [
+      "control.heartbeat"
+    ]
+  }
+}

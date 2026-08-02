@@ -7,6 +7,28 @@ import (
 	"testing"
 )
 
+func TestLoadAgentRegisterRequestFixture(t *testing.T) {
+	path := filepath.Join("..", "fixtures", "agent", "register-request.json")
+	value, err := LoadAgentRegisterRequest(path)
+	if err != nil {
+		t.Fatalf("LoadAgentRegisterRequest() error = %v", err)
+	}
+	if value.Hostname != "edge-one" || value.Arch != "amd64" {
+		t.Fatalf("Agent registration request = %+v", value)
+	}
+}
+
+func TestLoadAgentEnvelopeFixture(t *testing.T) {
+	path := filepath.Join("..", "fixtures", "agent", "hello.json")
+	value, err := LoadAgentEnvelope(path)
+	if err != nil {
+		t.Fatalf("LoadAgentEnvelope() error = %v", err)
+	}
+	if value.Type != "agent.hello" {
+		t.Fatalf("Agent envelope type = %q", value.Type)
+	}
+}
+
 func TestLoadContractPluginManifest(t *testing.T) {
 	path := filepath.Join("..", "fixtures", "contract-plugin", "manifest.json")
 	value, err := LoadManifest(path)
