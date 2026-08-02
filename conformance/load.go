@@ -7,7 +7,11 @@ import (
 	"io"
 	"os"
 
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
+
 	agentv1 "github.com/Relayward/relayward-sdk/agent/v1"
+	centerpluginv1 "github.com/Relayward/relayward-sdk/centerplugin/v1"
 	"github.com/Relayward/relayward-sdk/manifest"
 	"github.com/Relayward/relayward-sdk/protocol"
 )
@@ -84,6 +88,61 @@ func LoadAgentPluginStatus(path string) (agentv1.PluginStatusEvent, error) {
 	return value, nil
 }
 
+func LoadCenterPluginInfo(path string) (*centerpluginv1.GetInfoResponse, error) {
+	value := &centerpluginv1.GetInfoResponse{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load center plugin info: %w", err)
+	}
+	if err := centerpluginv1.ValidateInfoResponse(value, "", ""); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+func LoadCenterPluginActivation(path string) (*centerpluginv1.ActivateRequest, error) {
+	value := &centerpluginv1.ActivateRequest{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load center plugin activation: %w", err)
+	}
+	if err := centerpluginv1.ValidateActivateRequest(value); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+func LoadCenterPluginStatus(path string) (*centerpluginv1.GetStatusResponse, error) {
+	value := &centerpluginv1.GetStatusResponse{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load center plugin status: %w", err)
+	}
+	if err := centerpluginv1.ValidateStatusResponse(value); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+func LoadCenterPluginUIRequest(path string) (*centerpluginv1.InvokeUIRequest, error) {
+	value := &centerpluginv1.InvokeUIRequest{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load center plugin UI request: %w", err)
+	}
+	if err := centerpluginv1.ValidateInvokeUIRequest(value); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+func LoadCenterPluginNodes(path string) (*centerpluginv1.ListNodesResponse, error) {
+	value := &centerpluginv1.ListNodesResponse{}
+	if err := loadProtoJSON(path, value); err != nil {
+		return nil, fmt.Errorf("load center plugin nodes: %w", err)
+	}
+	if err := centerpluginv1.ValidateListNodesResponse(value); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
 func LoadEnvelope(path string) (protocol.Envelope, error) {
 	file, err := openContractFile(path)
 	if err != nil {
@@ -147,4 +206,17 @@ func openContractFile(path string) (*os.File, error) {
 		return nil, fmt.Errorf("contract file exceeds %d bytes", maxContractFileSize)
 	}
 	return file, nil
+}
+
+func loadProtoJSON(path string, destination proto.Message) error {
+	file, err := openContractFile(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	raw, err := io.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	return (protojson.UnmarshalOptions{DiscardUnknown: false}).Unmarshal(raw, destination)
 }

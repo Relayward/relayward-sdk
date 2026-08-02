@@ -1,0 +1,10 @@
+{
+  "nodes": [
+    {
+      "id": "node-1",
+      "name": "Edge one",
+      "enabled": true,
+      "connected": true
+    }
+  ]
+}

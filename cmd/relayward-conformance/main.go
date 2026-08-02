@@ -42,6 +42,16 @@ func run(args []string, stdout, stderr io.Writer) int {
 		_, err = conformance.LoadAgentPluginReconcileCommand(args[1])
 	case "agent-plugin-status":
 		_, err = conformance.LoadAgentPluginStatus(args[1])
+	case "center-plugin-info":
+		_, err = conformance.LoadCenterPluginInfo(args[1])
+	case "center-plugin-activation":
+		_, err = conformance.LoadCenterPluginActivation(args[1])
+	case "center-plugin-status":
+		_, err = conformance.LoadCenterPluginStatus(args[1])
+	case "center-plugin-ui":
+		_, err = conformance.LoadCenterPluginUIRequest(args[1])
+	case "center-plugin-nodes":
+		_, err = conformance.LoadCenterPluginNodes(args[1])
 	default:
 		printUsage(stderr)
 		return 2
@@ -55,6 +65,6 @@ func run(args []string, stdout, stderr io.Writer) int {
 }
 
 func printUsage(writer io.Writer) {
-	fmt.Fprintln(writer, "usage: relayward-conformance <manifest|envelope|agent-register|agent-envelope|agent-event-batch|agent-event-ack|agent-plugin-reconcile|agent-plugin-status> <path>")
+	fmt.Fprintln(writer, "usage: relayward-conformance <manifest|envelope|agent-register|agent-envelope|agent-event-batch|agent-event-ack|agent-plugin-reconcile|agent-plugin-status|center-plugin-info|center-plugin-activation|center-plugin-status|center-plugin-ui|center-plugin-nodes> <path>")
 	fmt.Fprintln(writer, "       relayward-conformance version")
 }

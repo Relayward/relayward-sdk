@@ -8,10 +8,11 @@ import (
 )
 
 const (
-	ManifestAPIVersion   = "relayward.plugin/v1"
-	ControlAPIVersion    = "relayward.control/v1"
-	AgentAPIVersion      = "relayward.agent/v1"
-	NodePluginAPIVersion = "relayward.node-plugin/v1"
+	ManifestAPIVersion     = "relayward.plugin/v1"
+	ControlAPIVersion      = "relayward.control/v1"
+	AgentAPIVersion        = "relayward.agent/v1"
+	NodePluginAPIVersion   = "relayward.node-plugin/v1"
+	CenterPluginAPIVersion = "relayward.center-plugin/v1"
 
 	ControlAPIMajor uint32 = 1
 	AgentAPIMajor   uint32 = 1

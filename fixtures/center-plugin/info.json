@@ -1,0 +1,5 @@
+{
+  "apiVersion": "relayward.center-plugin/v1",
+  "pluginId": "io.relayward.contract-test",
+  "version": "0.1.0"
+}

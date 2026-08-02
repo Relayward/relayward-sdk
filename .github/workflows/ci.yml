@@ -34,6 +34,11 @@ jobs:
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
       - run: /tmp/relayward-conformance agent-event-batch fixtures/agent/event-batch.json
       - run: /tmp/relayward-conformance agent-event-ack fixtures/agent/event-batch-ack.json
+      - run: /tmp/relayward-conformance center-plugin-info fixtures/center-plugin/info.json
+      - run: /tmp/relayward-conformance center-plugin-activation fixtures/center-plugin/activation.json
+      - run: /tmp/relayward-conformance center-plugin-status fixtures/center-plugin/status.json
+      - run: /tmp/relayward-conformance center-plugin-ui fixtures/center-plugin/ui-request.json
+      - run: /tmp/relayward-conformance center-plugin-nodes fixtures/center-plugin/nodes.json
 
   ui:
     runs-on: ubuntu-latest

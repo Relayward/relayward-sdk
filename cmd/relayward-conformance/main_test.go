@@ -46,6 +46,29 @@ func TestRunAgentFixtures(t *testing.T) {
 	}
 }
 
+func TestRunCenterPluginFixtures(t *testing.T) {
+	root := filepath.Join("..", "..", "fixtures", "center-plugin")
+	tests := []struct {
+		command string
+		file    string
+	}{
+		{command: "center-plugin-info", file: "info.json"},
+		{command: "center-plugin-activation", file: "activation.json"},
+		{command: "center-plugin-status", file: "status.json"},
+		{command: "center-plugin-ui", file: "ui-request.json"},
+		{command: "center-plugin-nodes", file: "nodes.json"},
+	}
+	for _, test := range tests {
+		t.Run(test.command, func(t *testing.T) {
+			var stdout bytes.Buffer
+			var stderr bytes.Buffer
+			if code := run([]string{test.command, filepath.Join(root, test.file)}, &stdout, &stderr); code != 0 {
+				t.Fatalf("run() = %d, stderr = %q", code, stderr.String())
+			}
+		})
+	}
+}
+
 func TestRunRejectsUnknownCommand(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer

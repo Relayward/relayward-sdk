@@ -51,6 +51,26 @@ func TestLoadContractPluginManifest(t *testing.T) {
 	}
 }
 
+func TestLoadCenterPluginFixtures(t *testing.T) {
+	root := filepath.Join("..", "fixtures", "center-plugin")
+	info, err := LoadCenterPluginInfo(filepath.Join(root, "info.json"))
+	if err != nil || info.PluginId != "io.relayward.contract-test" {
+		t.Fatalf("LoadCenterPluginInfo() = %+v, %v", info, err)
+	}
+	if _, err := LoadCenterPluginActivation(filepath.Join(root, "activation.json")); err != nil {
+		t.Fatalf("LoadCenterPluginActivation() error = %v", err)
+	}
+	if _, err := LoadCenterPluginStatus(filepath.Join(root, "status.json")); err != nil {
+		t.Fatalf("LoadCenterPluginStatus() error = %v", err)
+	}
+	if _, err := LoadCenterPluginUIRequest(filepath.Join(root, "ui-request.json")); err != nil {
+		t.Fatalf("LoadCenterPluginUIRequest() error = %v", err)
+	}
+	if _, err := LoadCenterPluginNodes(filepath.Join(root, "nodes.json")); err != nil {
+		t.Fatalf("LoadCenterPluginNodes() error = %v", err)
+	}
+}
+
 func TestLoadManifestRejectsOversizedFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "large.json")
 	if err := os.WriteFile(path, []byte(strings.Repeat(" ", maxContractFileSize+1)), 0o600); err != nil {

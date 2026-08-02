@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package relayward.centerplugin.v1;
+
+option go_package = "github.com/Relayward/relayward-sdk/centerplugin/v1;centerpluginv1";
+
+service CenterPlugin {
+  rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
+  rpc Activate(ActivateRequest) returns (Activated);
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+  rpc InvokeUI(InvokeUIRequest) returns (InvokeUIResponse);
+}
+
+service PluginHost {
+  rpc ListNodes(ListNodesRequest) returns (ListNodesResponse);
+}
+
+message GetInfoRequest {}
+
+message GetInfoResponse {
+  string api_version = 1;
+  string plugin_id = 2;
+  string version = 3;
+}
+
+message ActivateRequest {
+  repeated string permissions = 1;
+}
+
+message Activated {
+  repeated string permissions = 1;
+}
+
+message GetStatusRequest {}
+
+enum Health {
+  HEALTH_UNSPECIFIED = 0;
+  HEALTH_STARTING = 1;
+  HEALTH_HEALTHY = 2;
+  HEALTH_UNHEALTHY = 3;
+}
+
+message GetStatusResponse {
+  Health health = 1;
+  string message = 2;
+}
+
+message InvokeUIRequest {
+  string method = 1;
+  bytes json = 2;
+}
+
+message InvokeUIResponse {
+  bytes json = 1;
+}
+
+message ListNodesRequest {}
+
+message Node {
+  string id = 1;
+  string name = 2;
+  bool enabled = 3;
+  bool connected = 4;
+}
+
+message ListNodesResponse {
+  repeated Node nodes = 1;
+}
