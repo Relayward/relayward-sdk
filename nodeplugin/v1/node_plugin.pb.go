@@ -165,13 +165,14 @@ func (*GetInfoRequest) Descriptor() ([]byte, []int) {
 }
 
 type GetInfoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ApiVersion    string                 `protobuf:"bytes,1,opt,name=api_version,json=apiVersion,proto3" json:"api_version,omitempty"`
-	PluginId      string                 `protobuf:"bytes,2,opt,name=plugin_id,json=pluginId,proto3" json:"plugin_id,omitempty"`
-	Version       string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
-	Capabilities  []string               `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	ApiVersion        string                 `protobuf:"bytes,1,opt,name=api_version,json=apiVersion,proto3" json:"api_version,omitempty"`
+	PluginId          string                 `protobuf:"bytes,2,opt,name=plugin_id,json=pluginId,proto3" json:"plugin_id,omitempty"`
+	Version           string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Capabilities      []string               `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
+	TelemetryStreamId string                 `protobuf:"bytes,5,opt,name=telemetry_stream_id,json=telemetryStreamId,proto3" json:"telemetry_stream_id,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *GetInfoResponse) Reset() {
@@ -230,6 +231,13 @@ func (x *GetInfoResponse) GetCapabilities() []string {
 		return x.Capabilities
 	}
 	return nil
+}
+
+func (x *GetInfoResponse) GetTelemetryStreamId() string {
+	if x != nil {
+		return x.TelemetryStreamId
+	}
+	return ""
 }
 
 type ConfigurationRequest struct {
@@ -1189,13 +1197,14 @@ var File_nodeplugin_v1_node_plugin_proto protoreflect.FileDescriptor
 const file_nodeplugin_v1_node_plugin_proto_rawDesc = "" +
 	"\n" +
 	"\x1fnodeplugin/v1/node_plugin.proto\x12\x17relayward.nodeplugin.v1\"\x10\n" +
-	"\x0eGetInfoRequest\"\x8d\x01\n" +
+	"\x0eGetInfoRequest\"\xbd\x01\n" +
 	"\x0fGetInfoResponse\x12\x1f\n" +
 	"\vapi_version\x18\x01 \x01(\tR\n" +
 	"apiVersion\x12\x1b\n" +
 	"\tplugin_id\x18\x02 \x01(\tR\bpluginId\x12\x18\n" +
 	"\aversion\x18\x03 \x01(\tR\aversion\x12\"\n" +
-	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\"b\n" +
+	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\x12.\n" +
+	"\x13telemetry_stream_id\x18\x05 \x01(\tR\x11telemetryStreamId\"b\n" +
 	"\x14ConfigurationRequest\x12\x1e\n" +
 	"\n" +
 	"generation\x18\x01 \x01(\x04R\n" +

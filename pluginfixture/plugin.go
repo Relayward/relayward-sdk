@@ -170,6 +170,7 @@ func (plugin *nodePlugin) GetInfo(context.Context, *nodepluginv1.GetInfoRequest)
 		ApiVersion: contract.NodePluginAPIVersion, PluginId: plugin.pluginID, Version: plugin.version,
 		Capabilities: []string{nodepluginv1.CapabilityRecentActivity, nodepluginv1.CapabilityDynamicBlocking,
 			nodepluginv1.CapabilityServiceControl, nodepluginv1.CapabilityTrafficCounters},
+		TelemetryStreamId: "0123456789abcdef0123456789abcdef",
 	}, nil
 }
 

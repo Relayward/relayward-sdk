@@ -18,6 +18,14 @@ func TestValidateInfoResponse(t *testing.T) {
 	if err := ValidateInfoResponse(value, "io.relayward.other", value.Version); err == nil {
 		t.Fatal("ValidateInfoResponse() accepted a different plugin ID")
 	}
+	value.Capabilities = []string{CapabilityRecentActivity, CapabilityServiceControl, CapabilityTrafficCounters}
+	if err := ValidateInfoResponse(value, value.PluginId, value.Version); err == nil {
+		t.Fatal("ValidateInfoResponse() accepted activity capability without a stream ID")
+	}
+	value.TelemetryStreamId = "0123456789abcdef0123456789abcdef"
+	if err := ValidateInfoResponse(value, value.PluginId, value.Version); err != nil {
+		t.Fatalf("ValidateInfoResponse() stream error = %v", err)
+	}
 }
 
 func TestValidateTelemetryAndEnforcement(t *testing.T) {

@@ -21,6 +21,7 @@ message GetInfoResponse {
   string plugin_id = 2;
   string version = 3;
   repeated string capabilities = 4;
+  string telemetry_stream_id = 5;
 }
 
 message ConfigurationRequest {

@@ -2,5 +2,6 @@
   "apiVersion": "relayward.node-plugin/v1",
   "pluginId": "io.relayward.contract-test",
   "version": "0.1.0",
-  "capabilities": ["activity.recent", "blocking.dynamic", "service.control", "traffic.counters"]
+  "capabilities": ["activity.recent", "blocking.dynamic", "service.control", "traffic.counters"],
+  "telemetryStreamId": "0123456789abcdef0123456789abcdef"
 }

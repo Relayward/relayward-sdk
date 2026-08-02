@@ -34,6 +34,7 @@ const (
 var componentIDPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
 
 var capabilityPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$`)
+var telemetryStreamIDPattern = regexp.MustCompile(`^[0-9a-f]{32}$`)
 
 func ValidateInfoResponse(value *GetInfoResponse, expectedPluginID, expectedVersion string) error {
 	if value == nil {
@@ -63,6 +64,13 @@ func ValidateInfoResponse(value *GetInfoResponse, expectedPluginID, expectedVers
 			return fmt.Errorf("capabilities: values must be sorted and unique")
 		}
 		previous = capability
+	}
+	hasActivity := HasCapability(value.Capabilities, CapabilityRecentActivity)
+	if hasActivity && !telemetryStreamIDPattern.MatchString(value.TelemetryStreamId) {
+		return fmt.Errorf("telemetry_stream_id: required for recent activity capability")
+	}
+	if !hasActivity && value.TelemetryStreamId != "" {
+		return fmt.Errorf("telemetry_stream_id: requires recent activity capability")
 	}
 	return nil
 }

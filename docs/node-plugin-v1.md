@@ -14,7 +14,7 @@ The Agent creates private parent directories, removes only its own stale socket,
 
 ## Identity And Readiness
 
-`GetInfo` reports the exact API version, immutable plugin ID, semantic plugin version, and sorted capability set. The Agent rejects an artifact whose identity or version differs from the desired release. A process is ready only after `GetInfo` succeeds within the startup deadline.
+`GetInfo` reports the exact API version, immutable plugin ID, semantic plugin version, sorted capability set, and a persistent random 128-bit telemetry stream ID when recent activity is supported. The Agent rejects an artifact whose identity or version differs from the desired release. A process is ready only after `GetInfo` succeeds within the startup deadline.
 
 Capabilities are explicit: `traffic.counters`, `activity.recent`, `service.control`, and `blocking.dynamic`. Quota enforcement requires traffic counters and service control. A policy with a soft IP limit additionally requires recent activity and dynamic blocking on every bound runtime plugin.
 
@@ -34,7 +34,7 @@ The Agent waits for the applied generation to become healthy before acknowledgin
 
 `CollectTelemetry` is a bounded polling RPC. Each response contains one sorted set of current monotonic counters and a contiguous page of access events after the requested cursor. Counters are keyed by authorization and service. `counter_epoch` identifies a counter lifetime; a new epoch or a lower value in the same epoch is treated as a runtime counter reset, while an identical sample contributes no traffic.
 
-Plugin event sequence numbers are positive, contiguous, and persistent across plugin restarts. The plugin retains an event until the Agent advances past its sequence. If the requested cursor is older than retained data, the plugin returns a data-loss error rather than skipping records. Access events use stable source event IDs so the center can deduplicate an Agent retry. Source IPs are canonical strings and events never contain credentials or complete client configuration.
+Plugin event sequence numbers are positive, contiguous, and persistent across process restarts. The telemetry stream ID survives those restarts but changes when the plugin's private data is deliberately removed, allowing a later installation to start again at sequence one. The plugin retains an event until the Agent advances past its sequence. If the requested cursor is older than retained data, the plugin returns a data-loss error rather than skipping records. Access events use stable source event IDs so the center can deduplicate an Agent retry. Source IPs are canonical strings and events never contain credentials or complete client configuration.
 
 ## Local Enforcement
 
