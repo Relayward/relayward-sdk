@@ -31,9 +31,10 @@ func main() {
 		ID:         "io.relayward.contract-test", Name: "Relayward contract test plugin", Version: *version,
 		Kind:     manifest.KindRuntime,
 		Requires: manifest.Requirements{ControlAPI: contract.ControlAPIMajor, AgentAPI: &agentAPI, UIAPI: &uiAPI},
-		Permissions: []manifest.Permission{{
-			Name: centerpluginv1.PermissionNodesRead, Reason: "Exercise permission-gated node state access.",
-		}},
+		Permissions: []manifest.Permission{
+			{Name: centerpluginv1.PermissionNodesRead, Reason: "Exercise permission-gated node state access."},
+			{Name: centerpluginv1.PermissionServicesWrite, Reason: "Exercise permission-gated service catalog replacement."},
+		},
 	}
 	for _, item := range []struct {
 		role manifest.ArtifactRole

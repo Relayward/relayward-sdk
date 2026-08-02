@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -133,6 +134,25 @@ func (plugin *centerPlugin) InvokeUI(ctx context.Context, request *centerpluginv
 		return &centerpluginv1.InvokeUIResponse{Json: raw}, nil
 	case "status.read":
 		raw, _ := json.Marshal(map[string]string{"plugin_id": plugin.pluginID, "version": plugin.version})
+		return &centerpluginv1.InvokeUIResponse{Json: raw}, nil
+	case "services.replace":
+		var input struct {
+			NodeID string `json:"node_id"`
+		}
+		if err := json.Unmarshal(request.Json, &input); err != nil {
+			return nil, status.Error(codes.InvalidArgument, "invalid service replacement")
+		}
+		response, err := centerpluginv1.NewPluginHostClient(host).ReplaceServices(ctx, &centerpluginv1.ReplaceServicesRequest{
+			NodeId: input.NodeID,
+			Services: []*centerpluginv1.PluginService{{
+				Id: "contract-main", DisplayName: "Contract service", Enabled: true,
+				Capabilities: []string{"subscription.render"}, SubscriptionSha256: strings.Repeat("a", 64),
+			}},
+		})
+		if err != nil {
+			return nil, err
+		}
+		raw, _ := json.Marshal(map[string]uint32{"service_count": response.ServiceCount})
 		return &centerpluginv1.InvokeUIResponse{Json: raw}, nil
 	default:
 		return nil, status.Error(codes.InvalidArgument, "unsupported UI method")
