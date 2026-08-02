@@ -323,8 +323,8 @@ func ValidateConsumeEventsRequest(value *ConsumeEventsRequest) error {
 		if len(event.Kind) > 128 || !eventKindPattern.MatchString(event.Kind) {
 			return fmt.Errorf("events[%d].kind: invalid event kind", index)
 		}
-		if event.ObservedAtUnixNano <= 0 {
-			return fmt.Errorf("events[%d].observed_at_unix_nano: must be positive", index)
+		if event.ObservedAtUnixNano == 0 {
+			return fmt.Errorf("events[%d].observed_at_unix_nano: must be set", index)
 		}
 		if event.ReceivedAtUnixNano <= 0 {
 			return fmt.Errorf("events[%d].received_at_unix_nano: must be positive", index)

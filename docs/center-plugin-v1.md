@@ -26,6 +26,8 @@ Each active feature plugin approved for `core.events.read` has its own durable c
 
 Consumption is at least once. A plugin must persist any state derived from the complete batch before returning `through_cursor`, and must deduplicate replays by event ID. The response can acknowledge only the final cursor, so partial success is not representable. An RPC error, invalid acknowledgement, timeout, crash, or unhealthy process leaves the cursor unchanged and records a retryable failure for that plugin without delaying Agent acknowledgement or any other consumer.
 
+Replay is bounded by the center's hot-event retention. A plugin unavailable beyond that window resumes from the next retained event instead of preventing cleanup and allowing the event database to grow without bound. Long-term normalized access archives are independent of this live-consumer stream.
+
 The same namespaced event interface is the extension point for later structured notification requests and notification-channel feature plugins. Version 1 deliberately does not define or implement Telegram, Uptime Kuma, or another channel-specific API.
 
 ## UI RPC
