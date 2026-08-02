@@ -34,6 +34,12 @@ The Agent persists a terminal `agent.command_result` before sending it. The cent
 
 Commands are delivered in creation order, one active command per node. Expired commands are not dispatched or started. Heartbeats continue while a command executes, and each handler receives a context limited to ten minutes. Command failure is terminal for that command ID even when its structured problem says a newly issued command may be retryable.
 
+### Agent self-update
+
+An `agent.update` command carries one semantic version without a leading `v`. The Agent resolves that version only from the fixed official Relayward Agent GitHub repository, verifies the bounded release manifest, exact artifact size and SHA-256, installed launcher compatibility, and the candidate's reported build version before switching an immutable version link.
+
+The old process does not complete the command when it requests its supervised restart. The candidate must establish an authenticated control session and receive a heartbeat acknowledgement before the pending update is atomically confirmed. It then completes the original durable command with an `activated` output. A candidate that exits before confirmation is rolled back by the stable launcher; the restored version completes the same command as failed. Re-delivery uses the durable pending, confirmed, or failed update state instead of downloading or switching twice.
+
 ## Security And Limits
 
 - Production registration uses HTTPS and control sessions use WSS.

@@ -59,7 +59,6 @@ type Manifest struct {
 var (
 	idPattern         = regexp.MustCompile(`^[a-z0-9]+(?:[.-][a-z0-9]+)*$`)
 	permissionPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9_-]*)+$`)
-	semverPattern     = regexp.MustCompile(`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
 	sha256Pattern     = regexp.MustCompile(`^[0-9a-f]{64}$`)
 )
 
@@ -101,8 +100,8 @@ func Validate(value Manifest) error {
 	if name := strings.TrimSpace(value.Name); name == "" || len(name) > 80 {
 		return fmt.Errorf("name: must contain 1 to 80 characters")
 	}
-	if !validSemVer(value.Version) {
-		return fmt.Errorf("version: must be a semantic version without a leading v")
+	if err := contract.ValidateSemanticVersion(value.Version); err != nil {
+		return fmt.Errorf("version: %w", err)
 	}
 	if value.Kind != KindRuntime && value.Kind != KindFeature {
 		return fmt.Errorf("kind: unsupported value %q", value.Kind)
@@ -114,33 +113,6 @@ func Validate(value Manifest) error {
 		return err
 	}
 	return validateArtifacts(value)
-}
-
-func validSemVer(value string) bool {
-	if !semverPattern.MatchString(value) {
-		return false
-	}
-	coreAndPreRelease := strings.SplitN(value, "+", 2)[0]
-	preReleaseStart := strings.IndexByte(coreAndPreRelease, '-')
-	if preReleaseStart < 0 {
-		return true
-	}
-	preRelease := coreAndPreRelease[preReleaseStart+1:]
-	for _, identifier := range strings.Split(preRelease, ".") {
-		if len(identifier) > 1 && identifier[0] == '0' && allDigits(identifier) {
-			return false
-		}
-	}
-	return true
-}
-
-func allDigits(value string) bool {
-	for _, character := range value {
-		if character < '0' || character > '9' {
-			return false
-		}
-	}
-	return true
 }
 
 func validatePermissions(permissions []Permission) error {

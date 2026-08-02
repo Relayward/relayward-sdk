@@ -1,6 +1,12 @@
 // Package contract defines the common version identifiers used by Relayward contracts.
 package contract
 
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
+
 const (
 	ManifestAPIVersion = "relayward.plugin/v1"
 	ControlAPIVersion  = "relayward.control/v1"
@@ -10,6 +16,34 @@ const (
 	AgentAPIMajor   uint32 = 1
 	UIAPIMajor      uint32 = 1
 )
+
+var semanticVersionPattern = regexp.MustCompile(`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
+
+func ValidateSemanticVersion(value string) error {
+	if len(value) > 128 || !semanticVersionPattern.MatchString(value) {
+		return fmt.Errorf("must be a semantic version without a leading v")
+	}
+	coreAndPreRelease := strings.SplitN(value, "+", 2)[0]
+	preReleaseStart := strings.IndexByte(coreAndPreRelease, '-')
+	if preReleaseStart < 0 {
+		return nil
+	}
+	for _, identifier := range strings.Split(coreAndPreRelease[preReleaseStart+1:], ".") {
+		if len(identifier) > 1 && identifier[0] == '0' && allDigits(identifier) {
+			return fmt.Errorf("must be a semantic version without pre-release numeric leading zeros")
+		}
+	}
+	return nil
+}
+
+func allDigits(value string) bool {
+	for _, character := range value {
+		if character < '0' || character > '9' {
+			return false
+		}
+	}
+	return true
+}
 
 func IsMessageAPIVersion(value string) bool {
 	switch value {
