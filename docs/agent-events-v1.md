@@ -20,7 +20,7 @@ The Agent removes events only after durably applying a matching acknowledgement.
 
 Event transport is core-neutral. Kinds are namespaced identifiers and payloads are bounded JSON. The first standard payloads are:
 
-- `traffic.snapshot`: the Agent's absolute upload and download ledger for one authorization and deterministic period, with a monotonic revision. The center replaces an older revision rather than summing deliveries.
+- `traffic.snapshot`: the Agent's absolute upload and download ledger for one authorization and deterministic period, with a monotonic revision. Revisions and byte counters are bounded by signed 64-bit storage. The center replaces an older revision rather than summing deliveries.
 - `access.observed`: a normalized runtime access decision with the plugin telemetry stream ID, a source event ID stable inside that stream, authorization and service identity, and only the applicable source, destination, port, network, protocol, and action fields. Consumers deduplicate by node, plugin, source stream, and source event ID so retries collapse without confusing a later plugin installation that starts a new stream.
 - `policy.status`: the locally enforced authorization state, absolute period totals, active and blocked IP counts, and enforcement reason.
 - `plugin.status`: node-plugin lifecycle state and the capabilities reported by a healthy running process.

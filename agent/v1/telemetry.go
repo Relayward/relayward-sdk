@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net"
 	"regexp"
 	"strings"
@@ -52,8 +53,11 @@ func ValidateTrafficSnapshotEvent(value TrafficSnapshotEvent) error {
 	if err := policyv1.ValidatePeriod(value.Period); err != nil {
 		return err
 	}
-	if value.Revision == 0 {
-		return fmt.Errorf("revision: must be greater than zero")
+	if value.Revision == 0 || value.Revision > math.MaxInt64 {
+		return fmt.Errorf("revision: must be between 1 and %d", int64(math.MaxInt64))
+	}
+	if value.UploadBytes > math.MaxInt64 || value.DownloadBytes > math.MaxInt64 {
+		return fmt.Errorf("traffic bytes: must not exceed %d", int64(math.MaxInt64))
 	}
 	return nil
 }

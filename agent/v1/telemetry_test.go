@@ -2,6 +2,7 @@ package agentv1
 
 import (
 	"encoding/json"
+	"math"
 	"testing"
 	"time"
 
@@ -21,6 +22,10 @@ func TestStandardTelemetryValidation(t *testing.T) {
 	raw, _ := json.Marshal(traffic)
 	if decoded, err := DecodeTrafficSnapshotEvent(raw); err != nil || decoded.Revision != 3 {
 		t.Fatalf("DecodeTrafficSnapshotEvent() = %+v, %v", decoded, err)
+	}
+	traffic.UploadBytes = math.MaxInt64 + 1
+	if err := ValidateTrafficSnapshotEvent(traffic); err == nil {
+		t.Fatal("ValidateTrafficSnapshotEvent() accepted bytes above the storage limit")
 	}
 	access := AccessEvent{
 		SourceStreamID: "0123456789abcdef0123456789abcdef",

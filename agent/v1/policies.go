@@ -208,6 +208,9 @@ func ValidatePolicyStatusEvent(value PolicyStatusEvent) error {
 	if err := policyv1.ValidatePeriod(value.Period); err != nil {
 		return err
 	}
+	if value.UploadBytes > math.MaxInt64 || value.DownloadBytes > math.MaxInt64 {
+		return fmt.Errorf("traffic bytes: must not exceed %d", int64(math.MaxInt64))
+	}
 	switch value.Reason {
 	case PolicyReasonActive:
 		if !value.ServicesEnabled {
