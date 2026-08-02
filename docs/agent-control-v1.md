@@ -24,12 +24,21 @@ Control messages use the common envelope and its unique 128-bit message ID. Hear
 
 Registration can be retried only while the one-time token remains unused. A client that loses a successful registration response must obtain a new registration token because the original token has already been consumed.
 
-State-changing commands are added to this API only together with durable idempotency behavior in both center and Agent. Their absence from the initial message set is intentional.
+## Durable Commands
+
+The center persists a command before delivery. A heartbeat acknowledgement may carry one nested `center.command` envelope whose `idempotency_key` is the stable command ID. The command contains a typed kind, issuance and expiry times, and a bounded JSON payload. The command ID and SHA-256 digest of the complete command remain stable across every redelivery; transport envelope IDs do not.
+
+The Agent validates and durably records the command ID and request digest before execution. Repeating the same ID and request returns the stored terminal result. Reusing an ID with a different digest is a protocol conflict. If the Agent stops after recording a request but before recording its result, it may invoke the handler again after restart; every command handler must therefore use the stable command ID and implement its own recoverable, idempotent state transition.
+
+The Agent persists a terminal `agent.command_result` before sending it. The center validates the command ownership and request digest, persists the terminal result idempotently, and only then returns `center.command_result_ack`. An acknowledgement matches both the result envelope ID and the command digest. Until that acknowledgement is durably recorded locally, the Agent resends the stored result after reconnect. A repeated identical result is acknowledged again; a different result for a terminal command is a conflict.
+
+Commands are delivered in creation order, one active command per node. Expired commands are not dispatched or started. Heartbeats continue while a command executes, and each handler receives a context limited to ten minutes. Command failure is terminal for that command ID even when its structured problem says a newly issued command may be retryable.
 
 ## Security And Limits
 
 - Production registration uses HTTPS and control sessions use WSS.
 - Registration bodies and control envelopes are limited to 1 MiB.
+- Command payloads are limited to 512 KiB and result output to 256 KiB.
 - Secrets must never appear in message envelopes, informational logs, errors, metrics, or audit metadata.
 - The center stores only credential hashes.
 - Agent state directories use owner-only permissions and identity files use mode `0600`.

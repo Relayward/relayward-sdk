@@ -62,6 +62,13 @@ func NewID() (string, error) {
 	return hex.EncodeToString(value[:]), nil
 }
 
+func ValidateIdempotencyKey(value string) error {
+	if !idempotencyKeyPattern.MatchString(value) {
+		return fmt.Errorf("idempotency_key: invalid key")
+	}
+	return nil
+}
+
 func ValidateEnvelope(value Envelope) error {
 	if !contract.IsMessageAPIVersion(value.APIVersion) {
 		return fmt.Errorf("api_version: unsupported value %q", value.APIVersion)
@@ -89,8 +96,10 @@ func validateEnvelopeFields(value Envelope) error {
 	if value.CorrelationID != "" && !idPattern.MatchString(value.CorrelationID) {
 		return fmt.Errorf("correlation_id: invalid message id")
 	}
-	if value.IdempotencyKey != "" && !idempotencyKeyPattern.MatchString(value.IdempotencyKey) {
-		return fmt.Errorf("idempotency_key: invalid key")
+	if value.IdempotencyKey != "" {
+		if err := ValidateIdempotencyKey(value.IdempotencyKey); err != nil {
+			return err
+		}
 	}
 	if len(value.Payload) == 0 || !json.Valid(value.Payload) {
 		return fmt.Errorf("payload: must be valid JSON")

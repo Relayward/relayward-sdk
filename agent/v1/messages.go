@@ -10,11 +10,17 @@ import (
 )
 
 const (
-	MessageAgentHello         = "agent.hello"
-	MessageCenterHello        = "center.hello"
-	MessageAgentHeartbeat     = "agent.heartbeat"
-	MessageCenterHeartbeatAck = "center.heartbeat_ack"
-	MessageProtocolError      = "protocol.error"
+	MessageAgentHello             = "agent.hello"
+	MessageCenterHello            = "center.hello"
+	MessageAgentHeartbeat         = "agent.heartbeat"
+	MessageCenterHeartbeatAck     = "center.heartbeat_ack"
+	MessageCenterCommand          = "center.command"
+	MessageAgentCommandResult     = "agent.command_result"
+	MessageCenterCommandResultAck = "center.command_result_ack"
+	MessageProtocolError          = "protocol.error"
+
+	CapabilityControlHeartbeat = "control.heartbeat"
+	CapabilityControlCommands  = "control.commands"
 
 	DefaultHeartbeatInterval = 30 * time.Second
 	MinimumHeartbeatInterval = 5 * time.Second
@@ -42,8 +48,9 @@ type Heartbeat struct {
 }
 
 type HeartbeatAck struct {
-	MessageID  string    `json:"message_id"`
-	ServerTime time.Time `json:"server_time"`
+	MessageID  string             `json:"message_id"`
+	ServerTime time.Time          `json:"server_time"`
+	Command    *protocol.Envelope `json:"command,omitempty"`
 }
 
 func NewEnvelope(messageType string, payload any) (protocol.Envelope, error) {
@@ -87,6 +94,33 @@ func ValidateEnvelope(value protocol.Envelope) error {
 			return err
 		}
 		return ValidateHeartbeatAck(payload)
+	case MessageCenterCommand:
+		payload, err := DecodeEnvelopePayload[Command](value)
+		if err != nil {
+			return err
+		}
+		if err := protocol.ValidateIdempotencyKey(value.IdempotencyKey); err != nil {
+			return fmt.Errorf("center command: %w", err)
+		}
+		return ValidateCommand(payload)
+	case MessageAgentCommandResult:
+		payload, err := DecodeEnvelopePayload[CommandResult](value)
+		if err != nil {
+			return err
+		}
+		if value.IdempotencyKey != payload.CommandID {
+			return fmt.Errorf("idempotency_key: must match command_id")
+		}
+		return ValidateCommandResult(payload)
+	case MessageCenterCommandResultAck:
+		payload, err := DecodeEnvelopePayload[CommandResultAck](value)
+		if err != nil {
+			return err
+		}
+		if value.CorrelationID == "" {
+			return fmt.Errorf("correlation_id: required for command result acknowledgement")
+		}
+		return ValidateCommandResultAck(payload)
 	case MessageProtocolError:
 		payload, err := DecodeEnvelopePayload[protocol.Problem](value)
 		if err != nil {
@@ -144,6 +178,14 @@ func ValidateHeartbeatAck(value HeartbeatAck) error {
 	}
 	if value.ServerTime.IsZero() {
 		return fmt.Errorf("server_time: must be set")
+	}
+	if value.Command != nil {
+		if value.Command.Type != MessageCenterCommand {
+			return fmt.Errorf("command: must contain a center command envelope")
+		}
+		if err := ValidateEnvelope(*value.Command); err != nil {
+			return fmt.Errorf("command: %w", err)
+		}
 	}
 	return nil
 }

@@ -29,6 +29,9 @@ jobs:
       - run: /tmp/relayward-conformance envelope fixtures/envelopes/system-hello.json
       - run: /tmp/relayward-conformance agent-register fixtures/agent/register-request.json
       - run: /tmp/relayward-conformance agent-envelope fixtures/agent/hello.json
+      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command.json
+      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result.json
+      - run: /tmp/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
 
   ui:
     runs-on: ubuntu-latest

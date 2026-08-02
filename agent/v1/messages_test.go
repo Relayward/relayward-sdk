@@ -62,3 +62,22 @@ func TestCenterHelloHeartbeatBounds(t *testing.T) {
 		t.Fatal("ValidateCenterHello() accepted a one-second heartbeat")
 	}
 }
+
+func TestHeartbeatAckCarriesValidatedCommandEnvelope(t *testing.T) {
+	command, err := NewCommandEnvelope("command-1", testCommand())
+	if err != nil {
+		t.Fatalf("NewCommandEnvelope() error = %v", err)
+	}
+	value := HeartbeatAck{
+		MessageID:  "0123456789abcdef0123456789abcdef",
+		ServerTime: time.Now().UTC(),
+		Command:    &command,
+	}
+	if err := ValidateHeartbeatAck(value); err != nil {
+		t.Fatalf("ValidateHeartbeatAck() error = %v", err)
+	}
+	value.Command.Type = MessageAgentHello
+	if err := ValidateHeartbeatAck(value); err == nil {
+		t.Fatal("ValidateHeartbeatAck() accepted a non-command envelope")
+	}
+}

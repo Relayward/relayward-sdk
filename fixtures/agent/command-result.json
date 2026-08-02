@@ -1,0 +1,16 @@
+{
+  "api_version": "relayward.agent/v1",
+  "id": "2123456789abcdef0123456789abcdef",
+  "type": "agent.command_result",
+  "sent_at": "2026-08-02T08:01:00Z",
+  "idempotency_key": "command-1",
+  "payload": {
+    "command_id": "command-1",
+    "request_sha256": "3a91d020b542bec0dc31a88a20f85981909144107f015a07d31522c46b6b667a",
+    "status": "succeeded",
+    "completed_at": "2026-08-02T08:01:00Z",
+    "output": {
+      "version": "0.2.0"
+    }
+  }
+}

@@ -22,6 +22,9 @@ go vet ./...
 go run ./cmd/relayward-conformance manifest fixtures/contract-plugin/manifest.json
 go run ./cmd/relayward-conformance agent-register fixtures/agent/register-request.json
 go run ./cmd/relayward-conformance agent-envelope fixtures/agent/hello.json
+go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command.json
+go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command-result.json
+go run ./cmd/relayward-conformance agent-envelope fixtures/agent/command-result-ack.json
 
 cd ui
 npm ci

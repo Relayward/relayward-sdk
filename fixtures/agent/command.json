@@ -1,0 +1,15 @@
+{
+  "api_version": "relayward.agent/v1",
+  "id": "1123456789abcdef0123456789abcdef",
+  "type": "center.command",
+  "sent_at": "2026-08-02T08:00:00Z",
+  "idempotency_key": "command-1",
+  "payload": {
+    "kind": "agent.update",
+    "issued_at": "2026-08-02T08:00:00Z",
+    "expires_at": "2026-08-02T08:10:00Z",
+    "payload": {
+      "version": "0.2.0"
+    }
+  }
+}
