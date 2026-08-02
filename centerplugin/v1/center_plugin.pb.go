@@ -1001,6 +1001,186 @@ func (x *SubscriptionServiceContribution) GetSingBoxOutboundsJson() [][]byte {
 	return nil
 }
 
+type ConsumeEventsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Events        []*StandardEvent       `protobuf:"bytes,1,rep,name=events,proto3" json:"events,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConsumeEventsRequest) Reset() {
+	*x = ConsumeEventsRequest{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsumeEventsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsumeEventsRequest) ProtoMessage() {}
+
+func (x *ConsumeEventsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConsumeEventsRequest.ProtoReflect.Descriptor instead.
+func (*ConsumeEventsRequest) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ConsumeEventsRequest) GetEvents() []*StandardEvent {
+	if x != nil {
+		return x.Events
+	}
+	return nil
+}
+
+type StandardEvent struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Cursor             uint64                 `protobuf:"varint,1,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	EventId            string                 `protobuf:"bytes,2,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	NodeId             string                 `protobuf:"bytes,3,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	Kind               string                 `protobuf:"bytes,4,opt,name=kind,proto3" json:"kind,omitempty"`
+	ObservedAtUnixNano int64                  `protobuf:"varint,5,opt,name=observed_at_unix_nano,json=observedAtUnixNano,proto3" json:"observed_at_unix_nano,omitempty"`
+	ReceivedAtUnixNano int64                  `protobuf:"varint,6,opt,name=received_at_unix_nano,json=receivedAtUnixNano,proto3" json:"received_at_unix_nano,omitempty"`
+	Json               []byte                 `protobuf:"bytes,7,opt,name=json,proto3" json:"json,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *StandardEvent) Reset() {
+	*x = StandardEvent{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StandardEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StandardEvent) ProtoMessage() {}
+
+func (x *StandardEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StandardEvent.ProtoReflect.Descriptor instead.
+func (*StandardEvent) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *StandardEvent) GetCursor() uint64 {
+	if x != nil {
+		return x.Cursor
+	}
+	return 0
+}
+
+func (x *StandardEvent) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
+func (x *StandardEvent) GetNodeId() string {
+	if x != nil {
+		return x.NodeId
+	}
+	return ""
+}
+
+func (x *StandardEvent) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *StandardEvent) GetObservedAtUnixNano() int64 {
+	if x != nil {
+		return x.ObservedAtUnixNano
+	}
+	return 0
+}
+
+func (x *StandardEvent) GetReceivedAtUnixNano() int64 {
+	if x != nil {
+		return x.ReceivedAtUnixNano
+	}
+	return 0
+}
+
+func (x *StandardEvent) GetJson() []byte {
+	if x != nil {
+		return x.Json
+	}
+	return nil
+}
+
+type EventsConsumed struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ThroughCursor uint64                 `protobuf:"varint,1,opt,name=through_cursor,json=throughCursor,proto3" json:"through_cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EventsConsumed) Reset() {
+	*x = EventsConsumed{}
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EventsConsumed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventsConsumed) ProtoMessage() {}
+
+func (x *EventsConsumed) ProtoReflect() protoreflect.Message {
+	mi := &file_centerplugin_v1_center_plugin_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EventsConsumed.ProtoReflect.Descriptor instead.
+func (*EventsConsumed) Descriptor() ([]byte, []int) {
+	return file_centerplugin_v1_center_plugin_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *EventsConsumed) GetThroughCursor() uint64 {
+	if x != nil {
+		return x.ThroughCursor
+	}
+	return 0
+}
+
 var File_centerplugin_v1_center_plugin_proto protoreflect.FileDescriptor
 
 const file_centerplugin_v1_center_plugin_proto_rawDesc = "" +
@@ -1061,18 +1241,31 @@ const file_centerplugin_v1_center_plugin_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x12\n" +
 	"\x04uris\x18\x03 \x03(\tR\x04uris\x12.\n" +
 	"\x13mihomo_proxies_json\x18\x04 \x03(\fR\x11mihomoProxiesJson\x125\n" +
-	"\x17sing_box_outbounds_json\x18\x05 \x03(\fR\x14singBoxOutboundsJson*_\n" +
+	"\x17sing_box_outbounds_json\x18\x05 \x03(\fR\x14singBoxOutboundsJson\"X\n" +
+	"\x14ConsumeEventsRequest\x12@\n" +
+	"\x06events\x18\x01 \x03(\v2(.relayward.centerplugin.v1.StandardEventR\x06events\"\xe9\x01\n" +
+	"\rStandardEvent\x12\x16\n" +
+	"\x06cursor\x18\x01 \x01(\x04R\x06cursor\x12\x19\n" +
+	"\bevent_id\x18\x02 \x01(\tR\aeventId\x12\x17\n" +
+	"\anode_id\x18\x03 \x01(\tR\x06nodeId\x12\x12\n" +
+	"\x04kind\x18\x04 \x01(\tR\x04kind\x121\n" +
+	"\x15observed_at_unix_nano\x18\x05 \x01(\x03R\x12observedAtUnixNano\x121\n" +
+	"\x15received_at_unix_nano\x18\x06 \x01(\x03R\x12receivedAtUnixNano\x12\x12\n" +
+	"\x04json\x18\a \x01(\fR\x04json\"7\n" +
+	"\x0eEventsConsumed\x12%\n" +
+	"\x0ethrough_cursor\x18\x01 \x01(\x04R\rthroughCursor*_\n" +
 	"\x06Health\x12\x16\n" +
 	"\x12HEALTH_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fHEALTH_STARTING\x10\x01\x12\x12\n" +
 	"\x0eHEALTH_HEALTHY\x10\x02\x12\x14\n" +
-	"\x10HEALTH_UNHEALTHY\x10\x032\x9f\x04\n" +
+	"\x10HEALTH_UNHEALTHY\x10\x032\x8c\x05\n" +
 	"\fCenterPlugin\x12`\n" +
 	"\aGetInfo\x12).relayward.centerplugin.v1.GetInfoRequest\x1a*.relayward.centerplugin.v1.GetInfoResponse\x12\\\n" +
 	"\bActivate\x12*.relayward.centerplugin.v1.ActivateRequest\x1a$.relayward.centerplugin.v1.Activated\x12f\n" +
 	"\tGetStatus\x12+.relayward.centerplugin.v1.GetStatusRequest\x1a,.relayward.centerplugin.v1.GetStatusResponse\x12c\n" +
 	"\bInvokeUI\x12*.relayward.centerplugin.v1.InvokeUIRequest\x1a+.relayward.centerplugin.v1.InvokeUIResponse\x12\x81\x01\n" +
-	"\x12RenderSubscription\x124.relayward.centerplugin.v1.RenderSubscriptionRequest\x1a5.relayward.centerplugin.v1.RenderSubscriptionResponse2\xe7\x01\n" +
+	"\x12RenderSubscription\x124.relayward.centerplugin.v1.RenderSubscriptionRequest\x1a5.relayward.centerplugin.v1.RenderSubscriptionResponse\x12k\n" +
+	"\rConsumeEvents\x12/.relayward.centerplugin.v1.ConsumeEventsRequest\x1a).relayward.centerplugin.v1.EventsConsumed2\xe7\x01\n" +
 	"\n" +
 	"PluginHost\x12f\n" +
 	"\tListNodes\x12+.relayward.centerplugin.v1.ListNodesRequest\x1a,.relayward.centerplugin.v1.ListNodesResponse\x12q\n" +
@@ -1091,7 +1284,7 @@ func file_centerplugin_v1_center_plugin_proto_rawDescGZIP() []byte {
 }
 
 var file_centerplugin_v1_center_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_centerplugin_v1_center_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_centerplugin_v1_center_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_centerplugin_v1_center_plugin_proto_goTypes = []any{
 	(Health)(0),                             // 0: relayward.centerplugin.v1.Health
 	(*GetInfoRequest)(nil),                  // 1: relayward.centerplugin.v1.GetInfoRequest
@@ -1112,6 +1305,9 @@ var file_centerplugin_v1_center_plugin_proto_goTypes = []any{
 	(*SubscriptionServiceBinding)(nil),      // 16: relayward.centerplugin.v1.SubscriptionServiceBinding
 	(*RenderSubscriptionResponse)(nil),      // 17: relayward.centerplugin.v1.RenderSubscriptionResponse
 	(*SubscriptionServiceContribution)(nil), // 18: relayward.centerplugin.v1.SubscriptionServiceContribution
+	(*ConsumeEventsRequest)(nil),            // 19: relayward.centerplugin.v1.ConsumeEventsRequest
+	(*StandardEvent)(nil),                   // 20: relayward.centerplugin.v1.StandardEvent
+	(*EventsConsumed)(nil),                  // 21: relayward.centerplugin.v1.EventsConsumed
 }
 var file_centerplugin_v1_center_plugin_proto_depIdxs = []int32{
 	0,  // 0: relayward.centerplugin.v1.GetStatusResponse.health:type_name -> relayward.centerplugin.v1.Health
@@ -1119,25 +1315,28 @@ var file_centerplugin_v1_center_plugin_proto_depIdxs = []int32{
 	13, // 2: relayward.centerplugin.v1.ReplaceServicesRequest.services:type_name -> relayward.centerplugin.v1.PluginService
 	16, // 3: relayward.centerplugin.v1.RenderSubscriptionRequest.services:type_name -> relayward.centerplugin.v1.SubscriptionServiceBinding
 	18, // 4: relayward.centerplugin.v1.RenderSubscriptionResponse.services:type_name -> relayward.centerplugin.v1.SubscriptionServiceContribution
-	1,  // 5: relayward.centerplugin.v1.CenterPlugin.GetInfo:input_type -> relayward.centerplugin.v1.GetInfoRequest
-	3,  // 6: relayward.centerplugin.v1.CenterPlugin.Activate:input_type -> relayward.centerplugin.v1.ActivateRequest
-	5,  // 7: relayward.centerplugin.v1.CenterPlugin.GetStatus:input_type -> relayward.centerplugin.v1.GetStatusRequest
-	7,  // 8: relayward.centerplugin.v1.CenterPlugin.InvokeUI:input_type -> relayward.centerplugin.v1.InvokeUIRequest
-	15, // 9: relayward.centerplugin.v1.CenterPlugin.RenderSubscription:input_type -> relayward.centerplugin.v1.RenderSubscriptionRequest
-	9,  // 10: relayward.centerplugin.v1.PluginHost.ListNodes:input_type -> relayward.centerplugin.v1.ListNodesRequest
-	12, // 11: relayward.centerplugin.v1.PluginHost.ReplaceServices:input_type -> relayward.centerplugin.v1.ReplaceServicesRequest
-	2,  // 12: relayward.centerplugin.v1.CenterPlugin.GetInfo:output_type -> relayward.centerplugin.v1.GetInfoResponse
-	4,  // 13: relayward.centerplugin.v1.CenterPlugin.Activate:output_type -> relayward.centerplugin.v1.Activated
-	6,  // 14: relayward.centerplugin.v1.CenterPlugin.GetStatus:output_type -> relayward.centerplugin.v1.GetStatusResponse
-	8,  // 15: relayward.centerplugin.v1.CenterPlugin.InvokeUI:output_type -> relayward.centerplugin.v1.InvokeUIResponse
-	17, // 16: relayward.centerplugin.v1.CenterPlugin.RenderSubscription:output_type -> relayward.centerplugin.v1.RenderSubscriptionResponse
-	11, // 17: relayward.centerplugin.v1.PluginHost.ListNodes:output_type -> relayward.centerplugin.v1.ListNodesResponse
-	14, // 18: relayward.centerplugin.v1.PluginHost.ReplaceServices:output_type -> relayward.centerplugin.v1.ServicesReplaced
-	12, // [12:19] is the sub-list for method output_type
-	5,  // [5:12] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	20, // 5: relayward.centerplugin.v1.ConsumeEventsRequest.events:type_name -> relayward.centerplugin.v1.StandardEvent
+	1,  // 6: relayward.centerplugin.v1.CenterPlugin.GetInfo:input_type -> relayward.centerplugin.v1.GetInfoRequest
+	3,  // 7: relayward.centerplugin.v1.CenterPlugin.Activate:input_type -> relayward.centerplugin.v1.ActivateRequest
+	5,  // 8: relayward.centerplugin.v1.CenterPlugin.GetStatus:input_type -> relayward.centerplugin.v1.GetStatusRequest
+	7,  // 9: relayward.centerplugin.v1.CenterPlugin.InvokeUI:input_type -> relayward.centerplugin.v1.InvokeUIRequest
+	15, // 10: relayward.centerplugin.v1.CenterPlugin.RenderSubscription:input_type -> relayward.centerplugin.v1.RenderSubscriptionRequest
+	19, // 11: relayward.centerplugin.v1.CenterPlugin.ConsumeEvents:input_type -> relayward.centerplugin.v1.ConsumeEventsRequest
+	9,  // 12: relayward.centerplugin.v1.PluginHost.ListNodes:input_type -> relayward.centerplugin.v1.ListNodesRequest
+	12, // 13: relayward.centerplugin.v1.PluginHost.ReplaceServices:input_type -> relayward.centerplugin.v1.ReplaceServicesRequest
+	2,  // 14: relayward.centerplugin.v1.CenterPlugin.GetInfo:output_type -> relayward.centerplugin.v1.GetInfoResponse
+	4,  // 15: relayward.centerplugin.v1.CenterPlugin.Activate:output_type -> relayward.centerplugin.v1.Activated
+	6,  // 16: relayward.centerplugin.v1.CenterPlugin.GetStatus:output_type -> relayward.centerplugin.v1.GetStatusResponse
+	8,  // 17: relayward.centerplugin.v1.CenterPlugin.InvokeUI:output_type -> relayward.centerplugin.v1.InvokeUIResponse
+	17, // 18: relayward.centerplugin.v1.CenterPlugin.RenderSubscription:output_type -> relayward.centerplugin.v1.RenderSubscriptionResponse
+	21, // 19: relayward.centerplugin.v1.CenterPlugin.ConsumeEvents:output_type -> relayward.centerplugin.v1.EventsConsumed
+	11, // 20: relayward.centerplugin.v1.PluginHost.ListNodes:output_type -> relayward.centerplugin.v1.ListNodesResponse
+	14, // 21: relayward.centerplugin.v1.PluginHost.ReplaceServices:output_type -> relayward.centerplugin.v1.ServicesReplaced
+	14, // [14:22] is the sub-list for method output_type
+	6,  // [6:14] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_centerplugin_v1_center_plugin_proto_init() }
@@ -1151,7 +1350,7 @@ func file_centerplugin_v1_center_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_centerplugin_v1_center_plugin_proto_rawDesc), len(file_centerplugin_v1_center_plugin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   18,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

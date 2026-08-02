@@ -11,12 +11,32 @@ func TestCenterPluginLifecycleValidation(t *testing.T) {
 	if err := ValidateInfoResponse(info, info.PluginId, info.Version); err != nil {
 		t.Fatalf("ValidateInfoResponse() error = %v", err)
 	}
-	request := &ActivateRequest{Permissions: []string{PermissionNodesRead, PermissionServicesWrite}}
+	request := &ActivateRequest{Permissions: []string{PermissionEventsRead, PermissionNodesRead, PermissionServicesWrite}}
 	if err := ValidateActivated(request, &Activated{Permissions: append([]string(nil), request.Permissions...)}); err != nil {
 		t.Fatalf("ValidateActivated() error = %v", err)
 	}
 	if err := ValidateStatusResponse(&GetStatusResponse{Health: Health_HEALTH_HEALTHY}); err != nil {
 		t.Fatalf("ValidateStatusResponse() error = %v", err)
+	}
+}
+
+func TestValidateEventConsumption(t *testing.T) {
+	request := &ConsumeEventsRequest{Events: []*StandardEvent{{
+		Cursor: 4, EventId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		NodeId: "10000000-0000-4000-8000-000000000001", Kind: "access.observed",
+		ObservedAtUnixNano: 1785686400000000000, ReceivedAtUnixNano: 1785686401000000000,
+		Json: []byte(`{"action":"accepted"}`),
+	}}}
+	if err := ValidateEventsConsumed(request, &EventsConsumed{ThroughCursor: 4}); err != nil {
+		t.Fatalf("ValidateEventsConsumed() error = %v", err)
+	}
+	request.Events = append(request.Events, &StandardEvent{
+		Cursor: 4, EventId: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+		NodeId: "10000000-0000-4000-8000-000000000001", Kind: "policy.status",
+		ObservedAtUnixNano: 1785686400000000000, ReceivedAtUnixNano: 1785686401000000000, Json: []byte(`{}`),
+	})
+	if err := ValidateConsumeEventsRequest(request); err == nil {
+		t.Fatal("ValidateConsumeEventsRequest() accepted a duplicate cursor")
 	}
 }
 

@@ -1,3 +1,3 @@
 {
-  "permissions": ["core.nodes.read", "core.services.write"]
+  "permissions": ["core.events.read", "core.nodes.read", "core.services.write"]
 }

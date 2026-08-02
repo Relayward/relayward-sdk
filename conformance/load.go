@@ -219,6 +219,40 @@ type CenterPluginSubscriptionFixture struct {
 	Response *centerpluginv1.RenderSubscriptionResponse
 }
 
+type CenterPluginEventsFixture struct {
+	Request  *centerpluginv1.ConsumeEventsRequest
+	Response *centerpluginv1.EventsConsumed
+}
+
+func LoadCenterPluginEvents(path string) (CenterPluginEventsFixture, error) {
+	file, err := openContractFile(path)
+	if err != nil {
+		return CenterPluginEventsFixture{}, fmt.Errorf("open center plugin events: %w", err)
+	}
+	defer file.Close()
+	var raw struct {
+		Request  json.RawMessage `json:"request"`
+		Response json.RawMessage `json:"response"`
+	}
+	if err := decodeContractJSON(file, &raw); err != nil {
+		return CenterPluginEventsFixture{}, fmt.Errorf("decode center plugin events: %w", err)
+	}
+	value := CenterPluginEventsFixture{
+		Request: &centerpluginv1.ConsumeEventsRequest{}, Response: &centerpluginv1.EventsConsumed{},
+	}
+	unmarshal := protojson.UnmarshalOptions{DiscardUnknown: false}
+	if err := unmarshal.Unmarshal(raw.Request, value.Request); err != nil {
+		return CenterPluginEventsFixture{}, fmt.Errorf("decode center plugin event request: %w", err)
+	}
+	if err := unmarshal.Unmarshal(raw.Response, value.Response); err != nil {
+		return CenterPluginEventsFixture{}, fmt.Errorf("decode center plugin event response: %w", err)
+	}
+	if err := centerpluginv1.ValidateEventsConsumed(value.Request, value.Response); err != nil {
+		return CenterPluginEventsFixture{}, err
+	}
+	return value, nil
+}
+
 func LoadCenterPluginSubscription(path string) (CenterPluginSubscriptionFixture, error) {
 	file, err := openContractFile(path)
 	if err != nil {

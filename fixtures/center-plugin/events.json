@@ -1,0 +1,18 @@
+{
+  "request": {
+    "events": [
+      {
+        "cursor": "42",
+        "eventId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "nodeId": "10000000-0000-4000-8000-000000000001",
+        "kind": "access.observed",
+        "observedAtUnixNano": "1785686400000000000",
+        "receivedAtUnixNano": "1785686401000000000",
+        "json": "eyJhY3Rpb24iOiJhY2NlcHRlZCJ9"
+      }
+    ]
+  },
+  "response": {
+    "throughCursor": "42"
+  }
+}

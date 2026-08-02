@@ -82,6 +82,7 @@ func TestRunCenterPluginFixtures(t *testing.T) {
 		{command: "center-plugin-nodes", file: "nodes.json"},
 		{command: "center-plugin-services", file: "services.json"},
 		{command: "center-plugin-subscription", file: "subscription.json"},
+		{command: "center-plugin-events", file: "events.json"},
 	}
 	for _, test := range tests {
 		t.Run(test.command, func(t *testing.T) {

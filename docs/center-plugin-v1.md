@@ -13,11 +13,20 @@ The plugin must report its exact API version, plugin ID, and semantic release ve
 Host RPC authorization is bound to the plugin process, its expected plugin ID, and its approved manifest permissions. Version 1 defines:
 
 - `core.nodes.read`, which permits `ListNodes`. The response exposes node ID, display name, enabled state, and current connection state; it does not expose node credentials, addresses, Agent hostnames, or event data.
+- `core.events.read`, which permits a feature plugin to consume the standard event stream. Event access includes source IP and destination data when present, so it must be declared with a specific reason and approved explicitly. Runtime plugins are never registered as event consumers even if they declare the permission.
 - `core.services.write`, which permits `ReplaceServices`. A runtime plugin atomically replaces only its own service catalog for one node. The Host supplies the plugin identity from the supervised process, so a plugin cannot create services for another plugin. An empty list removes the plugin's catalog for that node. Service IDs and capabilities are sorted, unique, bounded values. Each service supplies a SHA-256 digest of all plugin-owned inputs that can change its subscription output; the digest reveals no configuration and changes whenever those inputs change.
 
 A missing permission is returned as gRPC `PermissionDenied`. Registering services for a node where the plugin has no node instance is rejected.
 
 New Host RPCs require a concrete producer, consumer, permission, validation rules, and conformance test. Plugins never receive direct database access.
+
+## Feature event delivery
+
+Each active feature plugin approved for `core.events.read` has its own durable center-side cursor and failure state. The center sends bounded batches through `ConsumeEvents` in ingest order. The envelope exposes a stable event ID, opaque cursor, node ID, kind, observed and received times, and the validated JSON payload; it does not expose Agent stream credentials or transport state.
+
+Consumption is at least once. A plugin must persist any state derived from the complete batch before returning `through_cursor`, and must deduplicate replays by event ID. The response can acknowledge only the final cursor, so partial success is not representable. An RPC error, invalid acknowledgement, timeout, crash, or unhealthy process leaves the cursor unchanged and records a retryable failure for that plugin without delaying Agent acknowledgement or any other consumer.
+
+The same namespaced event interface is the extension point for later structured notification requests and notification-channel feature plugins. Version 1 deliberately does not define or implement Telegram, Uptime Kuma, or another channel-specific API.
 
 ## UI RPC
 

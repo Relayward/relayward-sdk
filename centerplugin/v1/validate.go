@@ -22,6 +22,7 @@ const (
 	EnvironmentPluginID      = "RELAYWARD_CENTER_PLUGIN_ID"
 
 	PermissionNodesRead     = "core.nodes.read"
+	PermissionEventsRead    = "core.events.read"
 	PermissionServicesWrite = "core.services.write"
 
 	MaximumStatusMessageBytes = 512
@@ -30,6 +31,9 @@ const (
 	MaximumFragmentsPerFormat = 32
 	MaximumFragmentBytes      = 64 << 10
 	MaximumSubscriptionBytes  = 512 << 10
+	MaximumEventBatchEvents   = 128
+	MaximumEventPayloadBytes  = 256 << 10
+	MaximumEventBatchBytes    = 768 << 10
 )
 
 var (
@@ -37,6 +41,7 @@ var (
 	serviceIDPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
 	uuidPattern      = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
 	sha256Pattern    = regexp.MustCompile(`^[0-9a-f]{64}$`)
+	eventKindPattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$`)
 )
 
 func ValidateInfoResponse(value *GetInfoResponse, expectedPluginID, expectedVersion string) error {
@@ -289,12 +294,72 @@ func ValidateRenderSubscriptionResponse(request *RenderSubscriptionRequest, resp
 	return nil
 }
 
+func ValidateConsumeEventsRequest(value *ConsumeEventsRequest) error {
+	if value == nil {
+		return fmt.Errorf("request: required")
+	}
+	if len(value.Events) == 0 || len(value.Events) > MaximumEventBatchEvents {
+		return fmt.Errorf("events: must contain 1 to %d values", MaximumEventBatchEvents)
+	}
+	var previous uint64
+	totalBytes := 0
+	for index, event := range value.Events {
+		if event == nil {
+			return fmt.Errorf("events[%d]: required", index)
+		}
+		if event.Cursor == 0 || event.Cursor > uint64(^uint64(0)>>1) {
+			return fmt.Errorf("events[%d].cursor: must be between 1 and the maximum signed 64-bit integer", index)
+		}
+		if index > 0 && event.Cursor <= previous {
+			return fmt.Errorf("events: cursors must be strictly increasing")
+		}
+		previous = event.Cursor
+		if !sha256Pattern.MatchString(event.EventId) {
+			return fmt.Errorf("events[%d].event_id: invalid event ID", index)
+		}
+		if !uuidPattern.MatchString(event.NodeId) {
+			return fmt.Errorf("events[%d].node_id: invalid node ID", index)
+		}
+		if len(event.Kind) > 128 || !eventKindPattern.MatchString(event.Kind) {
+			return fmt.Errorf("events[%d].kind: invalid event kind", index)
+		}
+		if event.ObservedAtUnixNano <= 0 {
+			return fmt.Errorf("events[%d].observed_at_unix_nano: must be positive", index)
+		}
+		if event.ReceivedAtUnixNano <= 0 {
+			return fmt.Errorf("events[%d].received_at_unix_nano: must be positive", index)
+		}
+		if len(event.Json) == 0 || len(event.Json) > MaximumEventPayloadBytes || !json.Valid(event.Json) {
+			return fmt.Errorf("events[%d].json: must contain at most %d bytes of valid JSON", index, MaximumEventPayloadBytes)
+		}
+		totalBytes += len(event.Json)
+		if totalBytes > MaximumEventBatchBytes {
+			return fmt.Errorf("events: payloads exceed %d bytes", MaximumEventBatchBytes)
+		}
+	}
+	return nil
+}
+
+func ValidateEventsConsumed(request *ConsumeEventsRequest, response *EventsConsumed) error {
+	if err := ValidateConsumeEventsRequest(request); err != nil {
+		return err
+	}
+	if response == nil {
+		return fmt.Errorf("response: required")
+	}
+	want := request.Events[len(request.Events)-1].Cursor
+	if response.ThroughCursor != want {
+		return fmt.Errorf("through_cursor: must acknowledge the complete batch")
+	}
+	return nil
+}
+
 func validatePermissions(values []string) error {
 	if !sort.StringsAreSorted(values) {
 		return fmt.Errorf("permissions: must be sorted")
 	}
 	for index, value := range values {
-		if value != PermissionNodesRead && value != PermissionServicesWrite {
+		if value != PermissionEventsRead && value != PermissionNodesRead && value != PermissionServicesWrite {
 			return fmt.Errorf("permissions[%d]: unsupported permission %q", index, value)
 		}
 		if index > 0 && value == values[index-1] {

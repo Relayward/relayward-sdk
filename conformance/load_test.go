@@ -100,6 +100,9 @@ func TestLoadCenterPluginFixtures(t *testing.T) {
 	if _, err := LoadCenterPluginSubscription(filepath.Join(root, "subscription.json")); err != nil {
 		t.Fatalf("LoadCenterPluginSubscription() error = %v", err)
 	}
+	if _, err := LoadCenterPluginEvents(filepath.Join(root, "events.json")); err != nil {
+		t.Fatalf("LoadCenterPluginEvents() error = %v", err)
+	}
 }
 
 func TestLoadManifestRejectsOversizedFile(t *testing.T) {

@@ -24,6 +24,7 @@ const (
 	CenterPlugin_GetStatus_FullMethodName          = "/relayward.centerplugin.v1.CenterPlugin/GetStatus"
 	CenterPlugin_InvokeUI_FullMethodName           = "/relayward.centerplugin.v1.CenterPlugin/InvokeUI"
 	CenterPlugin_RenderSubscription_FullMethodName = "/relayward.centerplugin.v1.CenterPlugin/RenderSubscription"
+	CenterPlugin_ConsumeEvents_FullMethodName      = "/relayward.centerplugin.v1.CenterPlugin/ConsumeEvents"
 )
 
 // CenterPluginClient is the client API for CenterPlugin service.
@@ -35,6 +36,7 @@ type CenterPluginClient interface {
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
 	InvokeUI(ctx context.Context, in *InvokeUIRequest, opts ...grpc.CallOption) (*InvokeUIResponse, error)
 	RenderSubscription(ctx context.Context, in *RenderSubscriptionRequest, opts ...grpc.CallOption) (*RenderSubscriptionResponse, error)
+	ConsumeEvents(ctx context.Context, in *ConsumeEventsRequest, opts ...grpc.CallOption) (*EventsConsumed, error)
 }
 
 type centerPluginClient struct {
@@ -95,6 +97,16 @@ func (c *centerPluginClient) RenderSubscription(ctx context.Context, in *RenderS
 	return out, nil
 }
 
+func (c *centerPluginClient) ConsumeEvents(ctx context.Context, in *ConsumeEventsRequest, opts ...grpc.CallOption) (*EventsConsumed, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EventsConsumed)
+	err := c.cc.Invoke(ctx, CenterPlugin_ConsumeEvents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CenterPluginServer is the server API for CenterPlugin service.
 // All implementations must embed UnimplementedCenterPluginServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type CenterPluginServer interface {
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
 	InvokeUI(context.Context, *InvokeUIRequest) (*InvokeUIResponse, error)
 	RenderSubscription(context.Context, *RenderSubscriptionRequest) (*RenderSubscriptionResponse, error)
+	ConsumeEvents(context.Context, *ConsumeEventsRequest) (*EventsConsumed, error)
 	mustEmbedUnimplementedCenterPluginServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedCenterPluginServer) InvokeUI(context.Context, *InvokeUIReques
 }
 func (UnimplementedCenterPluginServer) RenderSubscription(context.Context, *RenderSubscriptionRequest) (*RenderSubscriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenderSubscription not implemented")
+}
+func (UnimplementedCenterPluginServer) ConsumeEvents(context.Context, *ConsumeEventsRequest) (*EventsConsumed, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConsumeEvents not implemented")
 }
 func (UnimplementedCenterPluginServer) mustEmbedUnimplementedCenterPluginServer() {}
 func (UnimplementedCenterPluginServer) testEmbeddedByValue()                      {}
@@ -240,6 +256,24 @@ func _CenterPlugin_RenderSubscription_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CenterPlugin_ConsumeEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConsumeEventsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CenterPluginServer).ConsumeEvents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CenterPlugin_ConsumeEvents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CenterPluginServer).ConsumeEvents(ctx, req.(*ConsumeEventsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CenterPlugin_ServiceDesc is the grpc.ServiceDesc for CenterPlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var CenterPlugin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RenderSubscription",
 			Handler:    _CenterPlugin_RenderSubscription_Handler,
+		},
+		{
+			MethodName: "ConsumeEvents",
+			Handler:    _CenterPlugin_ConsumeEvents_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

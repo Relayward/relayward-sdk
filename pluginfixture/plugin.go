@@ -189,6 +189,17 @@ func (plugin *centerPlugin) RenderSubscription(_ context.Context, request *cente
 	return response, nil
 }
 
+func (*centerPlugin) ConsumeEvents(_ context.Context, request *centerpluginv1.ConsumeEventsRequest) (*centerpluginv1.EventsConsumed, error) {
+	if err := centerpluginv1.ValidateConsumeEventsRequest(request); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid event batch")
+	}
+	response := &centerpluginv1.EventsConsumed{ThroughCursor: request.Events[len(request.Events)-1].Cursor}
+	if err := centerpluginv1.ValidateEventsConsumed(request, response); err != nil {
+		return nil, status.Error(codes.Internal, "generated event acknowledgement is invalid")
+	}
+	return response, nil
+}
+
 type nodePlugin struct {
 	nodepluginv1.UnimplementedNodePluginServer
 	pluginID    string

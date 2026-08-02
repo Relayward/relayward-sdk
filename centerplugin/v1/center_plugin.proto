@@ -10,6 +10,7 @@ service CenterPlugin {
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
   rpc InvokeUI(InvokeUIRequest) returns (InvokeUIResponse);
   rpc RenderSubscription(RenderSubscriptionRequest) returns (RenderSubscriptionResponse);
+  rpc ConsumeEvents(ConsumeEventsRequest) returns (EventsConsumed);
 }
 
 service PluginHost {
@@ -108,4 +109,22 @@ message SubscriptionServiceContribution {
   repeated string uris = 3;
   repeated bytes mihomo_proxies_json = 4;
   repeated bytes sing_box_outbounds_json = 5;
+}
+
+message ConsumeEventsRequest {
+  repeated StandardEvent events = 1;
+}
+
+message StandardEvent {
+  uint64 cursor = 1;
+  string event_id = 2;
+  string node_id = 3;
+  string kind = 4;
+  int64 observed_at_unix_nano = 5;
+  int64 received_at_unix_nano = 6;
+  bytes json = 7;
+}
+
+message EventsConsumed {
+  uint64 through_cursor = 1;
 }
