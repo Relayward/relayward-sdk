@@ -26,7 +26,7 @@ func Run(version string) int {
 	if version == "" {
 		return 2
 	}
-	if os.Getenv(inheritedSecretSentinel) != "" {
+	if os.Getenv(inheritedSecretSentinel) != "" || os.Getenv("RELAYWARD_REGISTRATION_TOKEN") != "" {
 		return 41
 	}
 	if socket := os.Getenv(centerpluginv1.EnvironmentPluginSocket); socket != "" {
