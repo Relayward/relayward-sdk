@@ -311,9 +311,11 @@ var CenterPlugin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	PluginHost_ListNodes_FullMethodName       = "/relayward.centerplugin.v1.PluginHost/ListNodes"
-	PluginHost_ReplaceServices_FullMethodName = "/relayward.centerplugin.v1.PluginHost/ReplaceServices"
-	PluginHost_PublishEvents_FullMethodName   = "/relayward.centerplugin.v1.PluginHost/PublishEvents"
+	PluginHost_ListNodes_FullMethodName                  = "/relayward.centerplugin.v1.PluginHost/ListNodes"
+	PluginHost_GetNodePluginConfiguration_FullMethodName = "/relayward.centerplugin.v1.PluginHost/GetNodePluginConfiguration"
+	PluginHost_ConfigureNodePlugin_FullMethodName        = "/relayward.centerplugin.v1.PluginHost/ConfigureNodePlugin"
+	PluginHost_ReplaceServices_FullMethodName            = "/relayward.centerplugin.v1.PluginHost/ReplaceServices"
+	PluginHost_PublishEvents_FullMethodName              = "/relayward.centerplugin.v1.PluginHost/PublishEvents"
 )
 
 // PluginHostClient is the client API for PluginHost service.
@@ -321,6 +323,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginHostClient interface {
 	ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error)
+	GetNodePluginConfiguration(ctx context.Context, in *GetNodePluginConfigurationRequest, opts ...grpc.CallOption) (*NodePluginConfiguration, error)
+	ConfigureNodePlugin(ctx context.Context, in *ConfigureNodePluginRequest, opts ...grpc.CallOption) (*NodePluginConfigured, error)
 	ReplaceServices(ctx context.Context, in *ReplaceServicesRequest, opts ...grpc.CallOption) (*ServicesReplaced, error)
 	PublishEvents(ctx context.Context, in *PublishEventsRequest, opts ...grpc.CallOption) (*EventsPublished, error)
 }
@@ -337,6 +341,26 @@ func (c *pluginHostClient) ListNodes(ctx context.Context, in *ListNodesRequest, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListNodesResponse)
 	err := c.cc.Invoke(ctx, PluginHost_ListNodes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pluginHostClient) GetNodePluginConfiguration(ctx context.Context, in *GetNodePluginConfigurationRequest, opts ...grpc.CallOption) (*NodePluginConfiguration, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(NodePluginConfiguration)
+	err := c.cc.Invoke(ctx, PluginHost_GetNodePluginConfiguration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pluginHostClient) ConfigureNodePlugin(ctx context.Context, in *ConfigureNodePluginRequest, opts ...grpc.CallOption) (*NodePluginConfigured, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(NodePluginConfigured)
+	err := c.cc.Invoke(ctx, PluginHost_ConfigureNodePlugin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -368,6 +392,8 @@ func (c *pluginHostClient) PublishEvents(ctx context.Context, in *PublishEventsR
 // for forward compatibility.
 type PluginHostServer interface {
 	ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error)
+	GetNodePluginConfiguration(context.Context, *GetNodePluginConfigurationRequest) (*NodePluginConfiguration, error)
+	ConfigureNodePlugin(context.Context, *ConfigureNodePluginRequest) (*NodePluginConfigured, error)
 	ReplaceServices(context.Context, *ReplaceServicesRequest) (*ServicesReplaced, error)
 	PublishEvents(context.Context, *PublishEventsRequest) (*EventsPublished, error)
 	mustEmbedUnimplementedPluginHostServer()
@@ -382,6 +408,12 @@ type UnimplementedPluginHostServer struct{}
 
 func (UnimplementedPluginHostServer) ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNodes not implemented")
+}
+func (UnimplementedPluginHostServer) GetNodePluginConfiguration(context.Context, *GetNodePluginConfigurationRequest) (*NodePluginConfiguration, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNodePluginConfiguration not implemented")
+}
+func (UnimplementedPluginHostServer) ConfigureNodePlugin(context.Context, *ConfigureNodePluginRequest) (*NodePluginConfigured, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfigureNodePlugin not implemented")
 }
 func (UnimplementedPluginHostServer) ReplaceServices(context.Context, *ReplaceServicesRequest) (*ServicesReplaced, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReplaceServices not implemented")
@@ -424,6 +456,42 @@ func _PluginHost_ListNodes_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PluginHostServer).ListNodes(ctx, req.(*ListNodesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PluginHost_GetNodePluginConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNodePluginConfigurationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginHostServer).GetNodePluginConfiguration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PluginHost_GetNodePluginConfiguration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginHostServer).GetNodePluginConfiguration(ctx, req.(*GetNodePluginConfigurationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PluginHost_ConfigureNodePlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfigureNodePluginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginHostServer).ConfigureNodePlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PluginHost_ConfigureNodePlugin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginHostServer).ConfigureNodePlugin(ctx, req.(*ConfigureNodePluginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -474,6 +542,14 @@ var PluginHost_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListNodes",
 			Handler:    _PluginHost_ListNodes_Handler,
+		},
+		{
+			MethodName: "GetNodePluginConfiguration",
+			Handler:    _PluginHost_GetNodePluginConfiguration_Handler,
+		},
+		{
+			MethodName: "ConfigureNodePlugin",
+			Handler:    _PluginHost_ConfigureNodePlugin_Handler,
 		},
 		{
 			MethodName: "ReplaceServices",

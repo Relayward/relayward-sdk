@@ -25,11 +25,13 @@ export interface Problem {
 }
 
 export type Theme = "light" | "dark";
+export type Locale = "zh-CN" | "en";
 export type NavigationTarget = "plugins" | "nodes" | "users" | "authorizations" | "audit";
 
 export interface UIContext {
   plugin_id: string;
   theme: Theme;
+  locale: Locale;
 }
 
 export interface ConfirmOptions {
@@ -216,7 +218,7 @@ function isProblem(value: unknown): value is Problem {
 
 function isUIContext(value: unknown): value is UIContext {
   return isRecord(value) && typeof value.plugin_id === "string" && value.plugin_id.length > 0 &&
-    (value.theme === "light" || value.theme === "dark");
+    (value.theme === "light" || value.theme === "dark") && (value.locale === "zh-CN" || value.locale === "en");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

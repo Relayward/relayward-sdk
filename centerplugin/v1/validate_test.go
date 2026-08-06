@@ -1,8 +1,10 @@
 package centerpluginv1
 
 import (
+	"math"
 	"testing"
 
+	agentv1 "github.com/Relayward/relayward-sdk/agent/v1"
 	"github.com/Relayward/relayward-sdk/contract"
 )
 
@@ -11,12 +13,68 @@ func TestCenterPluginLifecycleValidation(t *testing.T) {
 	if err := ValidateInfoResponse(info, info.PluginId, info.Version); err != nil {
 		t.Fatalf("ValidateInfoResponse() error = %v", err)
 	}
-	request := &ActivateRequest{Permissions: []string{PermissionEventsRead, PermissionEventsWrite, PermissionNodesRead, PermissionServicesWrite}}
+	request := &ActivateRequest{Permissions: []string{PermissionEventsRead, PermissionEventsWrite, PermissionNodeConfigure, PermissionNodesRead, PermissionServicesWrite}}
 	if err := ValidateActivated(request, &Activated{Permissions: append([]string(nil), request.Permissions...)}); err != nil {
 		t.Fatalf("ValidateActivated() error = %v", err)
 	}
 	if err := ValidateStatusResponse(&GetStatusResponse{Health: Health_HEALTH_HEALTHY}); err != nil {
 		t.Fatalf("ValidateStatusResponse() error = %v", err)
+	}
+}
+
+func TestValidateNodePluginConfiguration(t *testing.T) {
+	request := &GetNodePluginConfigurationRequest{NodeId: "10000000-0000-4000-8000-000000000001"}
+	configuration := []byte(`{"inbounds":[]}`)
+	digest, err := agentv1.PluginConfigurationDigest(configuration)
+	if err != nil {
+		t.Fatalf("PluginConfigurationDigest() error = %v", err)
+	}
+	response := &NodePluginConfiguration{
+		Generation: 2,
+		Version:    "1.2.3",
+		Sha256:     digest,
+		Json:       configuration,
+	}
+	if err := ValidateNodePluginConfiguration(request, response); err != nil {
+		t.Fatalf("ValidateNodePluginConfiguration() error = %v", err)
+	}
+
+	response.Sha256 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if err := ValidateNodePluginConfiguration(request, response); err == nil {
+		t.Fatal("ValidateNodePluginConfiguration() accepted a mismatched digest")
+	}
+}
+
+func TestValidateConfigureNodePlugin(t *testing.T) {
+	request := &ConfigureNodePluginRequest{
+		NodeId:             "10000000-0000-4000-8000-000000000001",
+		ExpectedGeneration: 0,
+		Json:               []byte(`{"inbounds":[]}`),
+	}
+	digest, err := agentv1.PluginConfigurationDigest(request.Json)
+	if err != nil {
+		t.Fatalf("PluginConfigurationDigest() error = %v", err)
+	}
+	if err := ValidateNodePluginConfigured(request, &NodePluginConfigured{Generation: 1, Sha256: digest}); err != nil {
+		t.Fatalf("ValidateNodePluginConfigured() first generation error = %v", err)
+	}
+
+	request.ExpectedGeneration = 7
+	if err := ValidateNodePluginConfigured(request, &NodePluginConfigured{Generation: 8, Sha256: digest}); err != nil {
+		t.Fatalf("ValidateNodePluginConfigured() next generation error = %v", err)
+	}
+	if err := ValidateNodePluginConfigured(request, &NodePluginConfigured{Generation: 9, Sha256: digest}); err == nil {
+		t.Fatal("ValidateNodePluginConfigured() accepted a skipped generation")
+	}
+
+	request.ExpectedGeneration = math.MaxInt64
+	if err := ValidateConfigureNodePluginRequest(request); err == nil {
+		t.Fatal("ValidateConfigureNodePluginRequest() accepted an overflowing generation")
+	}
+	request.ExpectedGeneration = 0
+	request.Json = []byte(`[]`)
+	if err := ValidateConfigureNodePluginRequest(request); err == nil {
+		t.Fatal("ValidateConfigureNodePluginRequest() accepted a non-object configuration")
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/url"
 	"regexp"
 	"sort"
@@ -12,6 +13,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	agentv1 "github.com/Relayward/relayward-sdk/agent/v1"
 	"github.com/Relayward/relayward-sdk/contract"
 )
 
@@ -24,6 +26,7 @@ const (
 	PermissionNodesRead     = "core.nodes.read"
 	PermissionEventsRead    = "core.events.read"
 	PermissionEventsWrite   = "core.events.write"
+	PermissionNodeConfigure = "core.node_plugins.configure"
 	PermissionServicesWrite = "core.services.write"
 
 	MaximumStatusMessageBytes = 512
@@ -150,6 +153,75 @@ func ValidateListNodesResponse(value *ListNodesResponse) error {
 		if node.Name != strings.TrimSpace(node.Name) || node.Name == "" || len(node.Name) > 80 {
 			return fmt.Errorf("nodes[%d].name: must contain 1 to 80 trimmed bytes", index)
 		}
+	}
+	return nil
+}
+
+func ValidateGetNodePluginConfigurationRequest(value *GetNodePluginConfigurationRequest) error {
+	if value == nil {
+		return fmt.Errorf("request: required")
+	}
+	if !uuidPattern.MatchString(value.NodeId) {
+		return fmt.Errorf("node_id: invalid node ID")
+	}
+	return nil
+}
+
+func ValidateNodePluginConfiguration(request *GetNodePluginConfigurationRequest, value *NodePluginConfiguration) error {
+	if err := ValidateGetNodePluginConfigurationRequest(request); err != nil {
+		return err
+	}
+	if value == nil {
+		return fmt.Errorf("response: required")
+	}
+	if value.Generation == 0 || value.Generation > math.MaxInt64 {
+		return fmt.Errorf("generation: must be between 1 and %d", int64(math.MaxInt64))
+	}
+	if err := contract.ValidateSemanticVersion(value.Version); err != nil {
+		return fmt.Errorf("version: %w", err)
+	}
+	digest, err := pluginConfigurationDigest(value.Json)
+	if err != nil {
+		return fmt.Errorf("json: %w", err)
+	}
+	if value.Sha256 != digest {
+		return fmt.Errorf("sha256: does not match the configuration")
+	}
+	return nil
+}
+
+func ValidateConfigureNodePluginRequest(value *ConfigureNodePluginRequest) error {
+	if value == nil {
+		return fmt.Errorf("request: required")
+	}
+	if !uuidPattern.MatchString(value.NodeId) {
+		return fmt.Errorf("node_id: invalid node ID")
+	}
+	if value.ExpectedGeneration >= math.MaxInt64 {
+		return fmt.Errorf("expected_generation: must be less than %d", int64(math.MaxInt64))
+	}
+	if _, err := pluginConfigurationDigest(value.Json); err != nil {
+		return fmt.Errorf("json: %w", err)
+	}
+	return nil
+}
+
+func ValidateNodePluginConfigured(request *ConfigureNodePluginRequest, value *NodePluginConfigured) error {
+	if err := ValidateConfigureNodePluginRequest(request); err != nil {
+		return err
+	}
+	if value == nil {
+		return fmt.Errorf("response: required")
+	}
+	if value.Generation != request.ExpectedGeneration+1 {
+		return fmt.Errorf("generation: must advance the expected generation by one")
+	}
+	digest, err := pluginConfigurationDigest(request.Json)
+	if err != nil {
+		return fmt.Errorf("json: %w", err)
+	}
+	if value.Sha256 != digest {
+		return fmt.Errorf("sha256: does not match the configuration")
 	}
 	return nil
 }
@@ -425,7 +497,7 @@ func validatePermissions(values []string) error {
 		return fmt.Errorf("permissions: must be sorted")
 	}
 	for index, value := range values {
-		if value != PermissionEventsRead && value != PermissionEventsWrite && value != PermissionNodesRead && value != PermissionServicesWrite {
+		if value != PermissionEventsRead && value != PermissionEventsWrite && value != PermissionNodeConfigure && value != PermissionNodesRead && value != PermissionServicesWrite {
 			return fmt.Errorf("permissions[%d]: unsupported permission %q", index, value)
 		}
 		if index > 0 && value == values[index-1] {
@@ -433,6 +505,16 @@ func validatePermissions(values []string) error {
 		}
 	}
 	return nil
+}
+
+func pluginConfigurationDigest(raw []byte) (string, error) {
+	if err := agentv1.ValidatePluginConfiguration(raw); err != nil {
+		return "", err
+	}
+	if err := validateJSONObject(raw); err != nil {
+		return "", err
+	}
+	return agentv1.PluginConfigurationDigest(raw)
 }
 
 func validateDisplayName(field, value string) error {

@@ -13,7 +13,7 @@ The initial contract foundation provides:
 - a generic control-message envelope and standard problem codes;
 - the Linux AMD64 Agent registration and heartbeat control contract;
 - Go validation helpers and a conformance command;
-- a TypeScript package for shared UI-facing protocol types;
+- a TypeScript package for the sandbox UI bridge, host theme and locale context, and portable Relayward design tokens;
 - fixtures used by producer and consumer CI.
 
 Proxy protocols and unfinished business RPCs are intentionally absent. They are added only with a working producer, consumer, and conformance fixture.

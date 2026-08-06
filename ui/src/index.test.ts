@@ -49,8 +49,8 @@ describe("plugin UI bridge", () => {
     const client = createRelaywardUIClient(transport);
 
     const context = client.context();
-    transport.respond({ plugin_id: "io.relayward.test", theme: "light" });
-    await expect(context).resolves.toEqual({ plugin_id: "io.relayward.test", theme: "light" });
+    transport.respond({ plugin_id: "io.relayward.test", theme: "light", locale: "zh-CN" });
+    await expect(context).resolves.toEqual({ plugin_id: "io.relayward.test", theme: "light", locale: "zh-CN" });
 
     const rpc = client.rpc<{ count: number }>("nodes.summary", { enabled: true });
     expect(transport.sent.at(-1)?.payload).toEqual({ method: "nodes.summary", parameters: { enabled: true } });
