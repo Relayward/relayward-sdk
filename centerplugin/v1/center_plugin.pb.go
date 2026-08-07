@@ -1153,8 +1153,7 @@ type RenderSubscriptionRequest struct {
 	state           protoimpl.MessageState        `protogen:"open.v1"`
 	AuthorizationId string                        `protobuf:"bytes,1,opt,name=authorization_id,json=authorizationId,proto3" json:"authorization_id,omitempty"`
 	NodeId          string                        `protobuf:"bytes,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
-	PublicAddress   string                        `protobuf:"bytes,3,opt,name=public_address,json=publicAddress,proto3" json:"public_address,omitempty"`
-	Services        []*SubscriptionServiceBinding `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
+	Services        []*SubscriptionServiceBinding `protobuf:"bytes,3,rep,name=services,proto3" json:"services,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1199,13 +1198,6 @@ func (x *RenderSubscriptionRequest) GetAuthorizationId() string {
 func (x *RenderSubscriptionRequest) GetNodeId() string {
 	if x != nil {
 		return x.NodeId
-	}
-	return ""
-}
-
-func (x *RenderSubscriptionRequest) GetPublicAddress() string {
-	if x != nil {
-		return x.PublicAddress
 	}
 	return ""
 }
@@ -1640,12 +1632,11 @@ const file_centerplugin_v1_center_plugin_proto_rawDesc = "" +
 	"\x04json\x18\x05 \x01(\fR\x04json\"2\n" +
 	"\x0fEventsPublished\x12\x1f\n" +
 	"\vevent_count\x18\x01 \x01(\rR\n" +
-	"eventCount\"\xd9\x01\n" +
+	"eventCount\"\xb2\x01\n" +
 	"\x19RenderSubscriptionRequest\x12)\n" +
 	"\x10authorization_id\x18\x01 \x01(\tR\x0fauthorizationId\x12\x17\n" +
-	"\anode_id\x18\x02 \x01(\tR\x06nodeId\x12%\n" +
-	"\x0epublic_address\x18\x03 \x01(\tR\rpublicAddress\x12Q\n" +
-	"\bservices\x18\x04 \x03(\v25.relayward.centerplugin.v1.SubscriptionServiceBindingR\bservices\"^\n" +
+	"\anode_id\x18\x02 \x01(\tR\x06nodeId\x12Q\n" +
+	"\bservices\x18\x03 \x03(\v25.relayward.centerplugin.v1.SubscriptionServiceBindingR\bservices\"^\n" +
 	"\x1aSubscriptionServiceBinding\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +

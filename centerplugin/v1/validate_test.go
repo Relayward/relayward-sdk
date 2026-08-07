@@ -172,7 +172,6 @@ func TestValidateSubscriptionRendering(t *testing.T) {
 	request := &RenderSubscriptionRequest{
 		AuthorizationId: "20000000-0000-4000-8000-000000000002",
 		NodeId:          "10000000-0000-4000-8000-000000000001",
-		PublicAddress:   "edge.example.com",
 		Services:        []*SubscriptionServiceBinding{{ServiceId: "vless-main", DisplayName: "VLESS"}},
 	}
 	response := &RenderSubscriptionResponse{Services: []*SubscriptionServiceContribution{{

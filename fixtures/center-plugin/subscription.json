@@ -2,7 +2,6 @@
   "request": {
     "authorizationId": "20000000-0000-4000-8000-000000000002",
     "nodeId": "10000000-0000-4000-8000-000000000001",
-    "publicAddress": "edge.example.com",
     "services": [
       {
         "serviceId": "vless-main",

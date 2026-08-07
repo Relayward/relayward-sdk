@@ -188,15 +188,15 @@ func (plugin *centerPlugin) RenderSubscription(_ context.Context, request *cente
 	for index, service := range request.Services {
 		name := service.DisplayName + " / Contract"
 		uri := (&url.URL{
-			Scheme: "relayward-test", Host: request.PublicAddress, Path: "/" + service.ServiceId,
+			Scheme: "relayward-test", Host: "fixture.example.com", Path: "/" + service.ServiceId,
 			User: url.User(request.AuthorizationId), Fragment: name,
 		}).String()
 		mihomo, _ := json.Marshal(map[string]any{
-			"name": name, "type": "relayward-test", "server": request.PublicAddress,
+			"name": name, "type": "relayward-test", "server": "fixture.example.com",
 			"authorization_id": request.AuthorizationId, "service_id": service.ServiceId,
 		})
 		singBox, _ := json.Marshal(map[string]any{
-			"tag": name, "type": "relayward-test", "server": request.PublicAddress,
+			"tag": name, "type": "relayward-test", "server": "fixture.example.com",
 			"authorization_id": request.AuthorizationId, "service_id": service.ServiceId,
 		})
 		response.Services[index] = &centerpluginv1.SubscriptionServiceContribution{

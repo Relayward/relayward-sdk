@@ -131,8 +131,7 @@ message EventsPublished {
 message RenderSubscriptionRequest {
   string authorization_id = 1;
   string node_id = 2;
-  string public_address = 3;
-  repeated SubscriptionServiceBinding services = 4;
+  repeated SubscriptionServiceBinding services = 3;
 }
 
 message SubscriptionServiceBinding {

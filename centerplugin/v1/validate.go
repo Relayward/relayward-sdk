@@ -348,9 +348,6 @@ func ValidateRenderSubscriptionRequest(value *RenderSubscriptionRequest) error {
 	if !uuidPattern.MatchString(value.NodeId) {
 		return fmt.Errorf("node_id: invalid node ID")
 	}
-	if err := validateOptionalText("public_address", value.PublicAddress, 255); err != nil {
-		return err
-	}
 	if len(value.Services) == 0 || len(value.Services) > MaximumServices {
 		return fmt.Errorf("services: must contain 1 to %d values", MaximumServices)
 	}

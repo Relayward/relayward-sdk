@@ -42,7 +42,7 @@ Sandboxed plugin pages call their own center plugin through the parent UI bridge
 
 ## Subscription rendering
 
-`RenderSubscription` is called only for an active authorization and the enabled services bound to that plugin on one node. The request contains opaque node and authorization IDs, the node's public address, and the sorted bound service IDs and display names. It does not contain a subscription token, user contact details, traffic history, or another plugin's services.
+`RenderSubscription` is called only for an active authorization and the enabled services bound to that plugin on one node. The request contains opaque node and authorization IDs plus the sorted bound service IDs and display names. It does not contain a subscription token, user contact details, traffic history, another plugin's services, or a generic node endpoint. Each plugin owns the external connection endpoints required by its services.
 
 The plugin returns exactly one contribution per requested service, in the same order. A contribution contains a display name and one or more bounded fragments: absolute share URIs, JSON objects representing Mihomo proxies, and JSON objects representing sing-box outbounds. Plugins may omit unsupported formats for a service, but each service must contribute at least one fragment. The center validates and canonicalizes every fragment, removes exact duplicates, and owns the final Base64, YAML, and JSON documents.
 
